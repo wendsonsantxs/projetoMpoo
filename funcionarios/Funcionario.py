@@ -4,7 +4,7 @@ import uuid
 import requests
 class Funcionario():
     def __init__(self,nome, cpf, email, telefone, cep, rua, numero, bairro, cidade, cargo, data_contratacao, salario):
-        self.__id = self.gerador_id()
+        self.funcionarioId = self.gerador_id()
         self.__nome= nome
         self.__cpf = self.verifica_cpf(cpf)
         self.__email= self.valida_email(email)

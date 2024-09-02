@@ -3,10 +3,10 @@ import re
 
 class Candidatura:
     def __init__(self, vagaId, candidatoNome, status):
-        self.id= self.gerador_id()
-        self.vagaId= vagaId
-        self.candidatoNome= candidatoNome
-        self.status= status
+        self.__candidatoId= self.gerador_id()
+        self.__vagaId= vagaId
+        self.__candidatoNome= candidatoNome
+        #self.__status= status
         
     def gerador_id(self):
         id_gerado = uuid.uuid4()
