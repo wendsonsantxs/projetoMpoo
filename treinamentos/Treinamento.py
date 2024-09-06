@@ -2,13 +2,13 @@ import uuid
 import re
 
 class Treinamento:
-    def __init__(self, titulo, descricao, dataInicio, duracao, dataFim):
+    def __init__(self):
         self.__treinamentoId = self.gerador_id()
-        self.__titulo = titulo
-        self.__descricao = descricao
-        self.__dataInicio = dataInicio
-        self.__dataFim = dataFim
-        self.__duracao = duracao
+        self.__titulo = None
+        self.__descricao = None
+        self.__dataInicio = None
+        self.__dataFim = None
+        self.__duracao = None
         self.__participante = {}
         self.__status = self.status()
 
@@ -17,9 +17,50 @@ class Treinamento:
         str_id = str(id_gerado).replace('-','') # Retira os hífens
         troca_id = str_id[:8]
         numero_id = re.sub(r'\D', '', troca_id)
-        id = 41 + numero_id
+        id = 41 + int(numero_id)
         
         return id
+    
+    def gerenciarTreinamento(self):
+        pass
+
+
+    
+    @property
+    def treinamentoId(self):
+        return self.__treinamentoId
+    
+    @treinamentoId.setter
+    def treinamentoId(self, novoId):
+        self.__treinamentoId = novoId
+
+    @property
+    def status(self):
+        if self.__dataFim > self.__dataInicio:
+            return 'Em andamento'
+        else:
+            return 'Encerrado'
+              
+    @status.setter
+    def status(self, novoStatus):
+        self.__status = novoStatus
+
+    @property
+    def duracao(self):
+        return self.__duracao
+    
+    @duracao.setter
+    def duracao(self, novaDuracao):
+        self.__duracao = novaDuracao
+
+    @property
+    def participante(self):
+        return self.__participante
+    
+    @participante.setter
+    def participante(self, novoParticipante):
+        self.__participante = novoParticipante
+
         
     @property
     def titulo(self):
