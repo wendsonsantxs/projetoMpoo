@@ -2,6 +2,7 @@ from tkinter import Button
 from tkinter import Canvas
 from tkinter import PhotoImage
 from tkinter import Tk
+from tkinter import Entry
 
 from ui.window import Window
 from ui.window_state import WindowState

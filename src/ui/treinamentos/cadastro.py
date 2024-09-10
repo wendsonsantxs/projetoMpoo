@@ -166,4 +166,10 @@ class CadastroT(Window):
         self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_T))
 
     def register_coaching(self):
-        pass
+        nome = self.entry_5.get()
+        descricao = self.entry_2.get()
+        participantes = self.entry_3.get()
+        data_inicio = self.entry_4.get()
+        data_fim = self.entry_1.get()
+        duracao = self.entry_6.get()
+        

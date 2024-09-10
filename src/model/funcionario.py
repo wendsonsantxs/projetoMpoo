@@ -1,70 +1,69 @@
+from utils.util import Util
+from utils.env import Env
+
 import sqlite3
 import re
-import uuid
 import requests
+
 class Funcionario():
-    def __init__(self,nome, cpf, email, telefone, cep, rua, numero, bairro, cidade, cargo, data_contratacao, salario):
-        self.funcionarioId = self.gerador_id()
-        self.__nome= nome
+    def __init__(self,nome, email, cpf, telefone, endereco, numero, bairro, 
+                                            cidade, cep, cargo, departamento, salario, contratacao, data_nascimento):
+        self.funcionarioId = Util.gerador_id(7, 27)
+        self.__nome = nome
         self.__cpf = self.verifica_cpf(cpf)
-        self.__email= self.valida_email(email)
-        self.__telefone= self.verifica_telefone(telefone)
-        self.__cargo= cargo
-        self.__dataContratacao= data_contratacao
+        self.__email = self.valida_email(email)
+        self.__telefone = self.verifica_telefone(telefone)
+        self.__dataNascimento = data_nascimento
+        self.__cargo = cargo
+        self.__departamento = departamento
+        self.__dataContratacao= contratacao
         self.__salario= salario
         self.__cep = self.verifica_cep(cep)
-        self.__rua= rua
+        self.__endereco= endereco
         self.__numero= numero
         self.__bairro= bairro
         self.__cidade= cidade
 
-    def criar_tabela_funcionarios(self):
-        conn = sqlite3.connect('funcionarios.db')
+    def adicionar_funcionario(self):
+        conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
         cursor = conn.cursor()
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS funcionarios(
+            CREATE TABLE IF NOT EXISTS funcionarios( 
                 funcionarioId INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
                 cpf TEXT NOT NULL,
                 email TEXT NOT NULL,
+                data_nascimento TEXT NOT NULL,
                 telefone TEXT NOT NULL,
                 cep TEXT NOT NULL,
-                rua TEXT NOT NULL,
+                endereco TEXT NOT NULL,
                 numero INTEGER NOT NULL,
                 bairro TEXT NOT NULL,
                 cidade TEXT NOT NULL,
                 cargo TEXT NOT NULL,
+                departamento TEXT NOT NULL,
                 data_contratacao TEXT NOT NULL,
                 salario REAL NOT NULL
             )
         ''')
-        conn.commit()
-        conn.close()
-
-    def adicionar_funcionario(self):
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
 
         try:
             cursor.execute('''
-                INSERT INTO funcionarios (nome, cpf, email, telefone, cep, rua, numero, bairro, cidade, cargo, data_contratacao, salario)
+                INSERT INTO funcionarios (funcionarioId, nome, cpf, email, data_nascimento, telefone, cep, endereco, 
+                           numero, bairro, cidade, cargo, departamento, data_contratacao, salario)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-            ''', (self.__nome, self.__cpf, self.__email, self.__telefone, self.__cep, self.__rua, self.__numero, self.__bairro, self.__cidade, self.__cargo, self.__dataContratacao, self.__salario))
+            ''',(self.funcionarioId, self.__nome, self.__cpf, self.__email, self.__dataNascimento, self.__telefone, self.__cep,
+                    self.__endereco, self.__numero, self.__bairro, self.__cidade, self.__cargo,
+                    self.__departamento, self.__dataContratacao, self.__salario))
+            
             conn.commit()
             conn.close()
+
             print("Funcionário adicionado com sucesso!")
+
         except sqlite3.Error as e:
             print(f"Erro ao inserir dados: {e}")
 
-    def gerador_id(self):
-        id_gerado = uuid.uuid4()
-        str_id = str(id_gerado).replace('-','') # Retira os hífens
-        troca_id = str_id[:7]
-        numero_id = re.sub(r'\D', '', troca_id)
-        id = 201 + int(numero_id)
-        
-        return id
-    
     def verifica_cep(self, cep):
         if not re.match(r'^\d{5}\-\d{3}$', cep):
             raise ValueError(f'CEP inválido - {cep}')
@@ -79,7 +78,7 @@ class Funcionario():
     def endereco(self):
         return {
             'cep': self.__cep,
-            'rua': self.__rua,
+            'endereco': self.__endereco,
             'numero': self.__numero,
             'bairro': self.__bairro,
             'cidade': self.__cidade
@@ -96,10 +95,10 @@ class Funcionario():
         else:
             self.__cep = self.verifica_cep(novo_enderco['cep'])
 
-            if 'rua' and 'numero' and 'bairro' and 'cidade' not in novo_enderco:
+            if 'endereco' and 'numero' and 'bairro' and 'cidade' not in novo_enderco:
                 raise ValueError('Endereço incompleto')
             else:
-                self.__rua = novo_enderco['rua']
+                self.__endereco = novo_enderco['endereco']
                 self.__numero = novo_enderco['numero']
                 self.__bairro = novo_enderco['bairro']
                 self.__cidade = novo_enderco['cidade']
@@ -211,13 +210,6 @@ class Funcionario():
     def salario(self, novo_salario):
         self.__salario = novo_salario
 
-    @property   
-    def funcionarioId(self):
-        return self.funcionarioId
-    @funcionarioId.setter
-    def funcionarioId(self, novoId):
-        self.funcionarioId = novoId
-
     @property
     def cep(self):
         return self.__cep
@@ -226,11 +218,11 @@ class Funcionario():
         self.__cep = self.verifica_cep(novo_cep)
 
     @property
-    def rua(self):
-        return self.__rua
-    @rua.setter
-    def rua(self, nova_rua):
-        self.__rua = nova_rua
+    def endereco(self):
+        return self.__endereco
+    @endereco.setter
+    def endereco(self, nova_endereco):
+        self.__endereco = nova_endereco
 
     @property
     def numero(self):
@@ -255,6 +247,54 @@ class Funcionario():
 
     @property
     def endereco_completo(self):
-        return f'{self.__rua}, {self.__numero} - {self.__bairro}, {self.__cidade}'
+        return f'{self.__endereco}, {self.__numero} - {self.__bairro}, {self.__cidade}'
     
+    @property
+    def departamento(self):
+        return self.__departamento
+    
+    @departamento.setter
+    def departamento(self, novo_departamento):
+        self.__departamento = novo_departamento
 
+    @property
+    def data_nascimento(self):
+        return self.__dataNascimento
+    
+     @classmethod
+    def get_funcionario_by_id(cls, funcionario_id):
+        """Recupera um funcionário do banco de dados pelo ID."""
+        with sqlite3.connect('funcionarios.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM funcionarios WHERE funcionarioId=?", (funcionario_id,))
+            row = cursor.fetchone()
+
+        if row:
+            funcionario = cls(
+                nome=row[1],
+                cpf=row[2],
+                email=row[3],
+                telefone=row[4],
+                cep=row[5],
+                rua=row[6],
+                numero=row[7],
+                bairro=row[8],
+                cidade=row[9],
+                cargo=row[10],
+                data_contratacao=row[11],
+                salario=row[12]
+            )
+            funcionario.id = row[0]
+            return funcionario
+        else:
+            raise ValueError("Funcionário não encontrado")
+    
+     def adicionar_historico_trabalho(self, cargo_anterior, departamento_anterior, data_inicio, data_fim):
+        """Adiciona um registro ao histórico de trabalho do funcionário."""
+        historico = HistoricoTrabalho(self.id, cargo_anterior, departamento_anterior, data_inicio, data_fim)
+        self.historico_trabalho.append(historico)
+
+    def adicionar_avaliacao(self, data_avaliacao, feedback):
+        """Adiciona uma avaliação de desempenho ao funcionário."""
+        avaliacao = AvaliacaoDesempenho(self.id, data_avaliacao, feedback)
+        self.avaliacoes.append(avaliacao)

@@ -6,11 +6,12 @@ from tkinter import Tk
 
 from ui.window import Window
 from ui.window_state import WindowState
-
+from model.funcionario import Funcionario
 
 class CadastroF(Window):
     def __init__(self, root: Tk, width: int = 980, height: int = 825):
         super().__init__(root, width, height)
+        self.mensage_get = None
 
     def create(self):
         super().create()
@@ -342,19 +343,59 @@ class CadastroF(Window):
         self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_F))
 
     def register_employee(self):
-        nome = self.entry_12.get()
-        email = self.entry_13.get()
-        cpf = self.entry_1.get()
-        telefone = self.entry_2.get()
-        endereco = self.entry_14.get()
-        numero = self.entry_10.get()
-        bairro = self.entry_4.get()
-        cidade = self.entry_9.get()
-        cep = self.entry_3.get()
-        cargo = self.entry_5.get()
-        departamento = self.entry_6.get()
-        salario = self.entry_7.get()
-        contratacao = self.entry_8.get()
-        data_nascimento = self.entry_11.get()
+        
+        if self.entry_12.get() and self.entry_13.get() and self.entry_1.get() and self.entry_2.get() and self.entry_14.get() and self.entry_10.get() and self.entry_4.get() and self.entry_9.get() and self.entry_3.get() and self.entry_5.get() and self.entry_6.get() and self.entry_7.get() and self.entry_8.get() and self.entry_11.get():
 
-        print(nome, email, cpf, telefone, endereco, numero, bairro, cidade, cep, cargo, departamento, salario, contratacao, data_nascimento)
+            nome = self.entry_12.get() 
+            email = self.entry_13.get()
+            cpf = self.entry_1.get()
+            telefone = self.entry_2.get()
+            endereco = self.entry_14.get()
+            numero = self.entry_10.get()
+            bairro = self.entry_4.get()
+            cidade = self.entry_9.get()
+            cep = self.entry_3.get()
+            cargo = self.entry_5.get()
+            departamento = self.entry_6.get()
+            salario = self.entry_7.get()
+            contratacao = self.entry_8.get()
+            data_nascimento = self.entry_11.get()
+
+            try:
+                funcionario = Funcionario(nome, email, cpf, telefone, endereco, numero, bairro, 
+                                            cidade, cep, cargo, departamento, salario, contratacao, data_nascimento)
+                funcionario.adicionar_funcionario()
+
+            except ValueError as e:
+                if self.mensage_get:
+                    self.canvas.delete(self.mensage_get)
+                self.mensage_get = self.canvas.create_text(
+                    600.0, 
+                    174.0,  
+                    anchor="nw", 
+                    text=f"* {e}", 
+                    fill="#FF0000",
+                    font=("Itim Regular", 18 * -1)
+                    )
+                return
+
+            if self.mensage_get:
+                self.canvas.delete(self.mensage_get)
+            self.mensage_get = self.canvas.create_text(
+                    600.0, 
+                    174.0,  
+                    anchor="nw", 
+                    text="* Cadastro realizado com sucesso", 
+                    fill="#008c00",
+                    font=("Itim Regular", 18 * -1)
+                    )
+        else:
+            if not self.mensage_get:
+                self.mensage_get = self.canvas.create_text(
+                        600.0, 
+                        176.0,  
+                        anchor="nw", 
+                        text="Preencha todos os campos (*)", 
+                        fill="#FF0000",
+                        font=("Itim regular", 18 * -1)
+                        )

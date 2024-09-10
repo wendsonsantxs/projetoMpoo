@@ -159,4 +159,10 @@ class CadastroV(Window):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_RELACAO_V))
 
     def register_vacancy(self):
-        pass
+        titulo = self.entry_4.get()
+        requisitos = self.entry_1.get()
+        descricao = self.entry_2.get()
+        data_publicacao = self.entry_3.get()
+        duracao = self.entry_5.get()
+        duracao_selecao = self.entry_5.get()
+        
