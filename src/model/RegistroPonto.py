@@ -1,9 +1,12 @@
 from utils.util import Util
-from datetime import datetime 
+from utils.env import Env
+from datetime import datetime
+
+import sqlite3
 
 class RegistroPonto:
     def __init__(self, funcionarioId, data, horaEntrada, horaSaida, horasTrabalhadas):
-        self.__pontoId= Util.gerador_id(6, 839)
+        self.pontoId= Util.gerador_id(6, 839)
         self.__funcionarioId= funcionarioId
         self.__data= data
         self.__horaEntrada= horaEntrada
@@ -20,15 +23,6 @@ class RegistroPonto:
     def calcular_horas_trabalhadas(self):
         if self.entrada and self.saida:
             self.horasTrabalhadas = (self.saida - self.entrada).total_seconds() / 3600
-
-            
-    @property
-    def pontoId(self):
-        return self.__pontoId
-    
-    @pontoId.setter
-    def pontoId(self, novoId):
-        self.__pontoId = novoId
 
     @property
     def horasTrabalhadas(self):
@@ -65,4 +59,30 @@ class RegistroPonto:
     @horaSaida.setter
     def horaSaida(self, novaHora):
         self.__horaSaida = novaHora
+
+
+    def inserir(self):
         
+        conn = sqlite3.connect(Env.DATABASE_PONTO)
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS treinamentos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                funcionario TEXT NOT NULL,
+                data TEXT NOT NULL,
+                hora_entrada TEXT NOT NULL,
+                hora_saida TEXT NOT NULL,
+                horas_diaria TEXT NOT NULL
+            )
+        """)
+       
+        try:
+            cursor.execute('''
+                INSERT INTO treinamentos (id, funcionario, data, hora_entrada, hora_saida, horas_diaria)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (self.pontoId, self.__funcionarioId, self.__data, self.__horaEntrada, self.__horaSaida, self.__horasTrabalhadas))
+            conn.commit()
+            print("Ponto Registrado com sucesso!")
+
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir dados: {e}")

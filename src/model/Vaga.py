@@ -13,38 +13,6 @@ class Vaga:
         self.__dataSelecao = dataSelecao
         self.__status= Util.status(self.__dataPublicacao, self.__dataSelecao)
 
-    @property
-    def titulo(self):
-        return self.__titulo
-    
-    @property
-    def descricao(self):
-        return self.__descricao
-    
-    @descricao.setter
-    def descricao(self, novaDescricao):
-        self.__descricao = novaDescricao
-
-    @property
-    def dataPublicacao(self):
-        return self.__dataPublicacao
-    
-    @property
-    def requisitos(self):
-        return self.__requisitos
-    
-    @requisitos.setter
-    def requisitos(self, novosRequisitos):
-        self.__requisitos = novosRequisitos
-
-    @property
-    def dataSelecao(self):
-        return self.__dataSelecao
-    
-    @dataSelecao.setter
-    def dataSelecao(self, novaData):
-        self.__dataSelecao = novaData
-
     def adicionar_vaga(self):
         """Adiciona uma nova vaga ao banco de dados."""
         conn = sqlite3.connect(Env.DATABASE_VAGAS)

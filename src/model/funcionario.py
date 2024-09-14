@@ -25,6 +25,8 @@ class Funcionario():
         self.__cidade= cidade
 
     def adicionar_funcionario(self):
+       # print(f'{self.funcionarioId}, {self.__nome}, {self.__cpf}, {self.__email}, {self.__telefone}, {self.__dataNascimento}, {self.__cargo}, {self.__departamento}, {self.__dataContratacao}, {self.__salario}, {self.__cep}, {self.__endereco}, {self.__bairro}')
+
         conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
         cursor = conn.cursor()
         cursor.execute('''
@@ -51,7 +53,7 @@ class Funcionario():
             cursor.execute('''
                 INSERT INTO funcionarios (funcionarioId, nome, cpf, email, data_nascimento, telefone, cep, endereco, 
                            numero, bairro, cidade, cargo, departamento, data_contratacao, salario)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ''',(self.funcionarioId, self.__nome, self.__cpf, self.__email, self.__dataNascimento, self.__telefone, self.__cep,
                     self.__endereco, self.__numero, self.__bairro, self.__cidade, self.__cargo,
                     self.__departamento, self.__dataContratacao, self.__salario))
@@ -74,35 +76,7 @@ class Funcionario():
 
         return cep
     
-    @property
-    def endereco(self):
-        return {
-            'cep': self.__cep,
-            'endereco': self.__endereco,
-            'numero': self.__numero,
-            'bairro': self.__bairro,
-            'cidade': self.__cidade
-        }
-
     
-    @endereco.setter
-    def endereco(self, novo_enderco):
-        if not novo_enderco:
-            raise ValueError('Endereço não pode ser vazio')
-        
-        if 'cep' not in novo_enderco:
-            raise ValueError('CEP não pode ser vazio')
-        else:
-            self.__cep = self.verifica_cep(novo_enderco['cep'])
-
-            if 'endereco' and 'numero' and 'bairro' and 'cidade' not in novo_enderco:
-                raise ValueError('Endereço incompleto')
-            else:
-                self.__endereco = novo_enderco['endereco']
-                self.__numero = novo_enderco['numero']
-                self.__bairro = novo_enderco['bairro']
-                self.__cidade = novo_enderco['cidade']
-
     def verifica_cpf(self, cpf):
         temp_cpf = re.sub(r'\D', '', cpf)
         try:
@@ -127,58 +101,27 @@ class Funcionario():
             print(e)
             return None
     
-    @property
-    def cpf(self):
-        return self.__cpf
     
     def valida_email(self, email):
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email): # Verifica se o email é válido
             raise ValueError('Email inválido')
         
         return email
-    @cpf.setter
-    def cpf(self, novo_cpf):
-        temp = self.__cpf
-        if temp != novo_cpf:
-            self.__cpf = self.verifica_cpf(novo_cpf)
-        else:
-            raise ValueError('CPF já cadastrado anteriormente')
+    
+    @property
+    def cpf(self):
+        return self.__cpf
+    
     @property
     def email(self):
         return self.__email
     
-    @email.setter
-    def email(self, novo_email):
-        temp = self.__email
-        if temp != novo_email:
-            self.__email = self.valida_email(novo_email)
-        else:
-            raise ValueError('E-mail já cadastrado anteriormente')
 
     @property
     def nome(self):
         return self.__nome
     
-    @nome.setter
-    def nome(self, novo_nome):
-        temp = self.__nome
-        if temp != novo_nome:
-            self.__nome = novo_nome
-        else:
-            raise ValueError('Nome já cadastrado anteriormente')
-        
-    @property
-    def telefone(self):
-        return self.__telefone
-    
-    @telefone.setter
-    def telefone(self, novo_telefone):
-        temp = self.__telefone
-        if temp != self.__telefone:
-            self.__telefone = self.verifica_telefone(novo_telefone)
-        else:
-            raise ValueError('telefone já cadastrado anteriormente')
-        
+                
     def verifica_telefone(self, telefone):
         temp = re.sub(r'\D', '', telefone)
 
@@ -190,78 +133,8 @@ class Funcionario():
         else:
             raise ValueError('O número de telefone deve conter 11 dígitos')
         
-    @property
-    def cargo(self):
-        return self.__cargo
-    
-    @cargo.setter
-    def cargo(self, novo_cargo):
-        self.__cargo = novo_cargo
-
-    @property
-    def data_contratacao(self):
-        return self.__dataContratacao
-    
-    @property
-    def salario(self):
-        return self.__salario
-    
-    @salario.setter
-    def salario(self, novo_salario):
-        self.__salario = novo_salario
-
-    @property
-    def cep(self):
-        return self.__cep
-    @cep.setter
-    def cep(self, novo_cep):
-        self.__cep = self.verifica_cep(novo_cep)
-
-    @property
-    def endereco(self):
-        return self.__endereco
-    @endereco.setter
-    def endereco(self, nova_endereco):
-        self.__endereco = nova_endereco
-
-    @property
-    def numero(self):
-        return self.__numero
-    @numero.setter
-    def numero(self, novo_numero):
-        self.__numero = novo_numero
-
-    @property
-    def bairro(self):
-        return self.__bairro
-    @bairro.setter
-    def bairro(self, novo_bairro):
-        self.__bairro = novo_bairro
-
-    @property
-    def cidade(self):
-        return self.__cidade
-    @cidade.setter
-    def cidade(self, nova_cidade):
-        self.__cidade = nova_cidade
-
-    @property
-    def endereco_completo(self):
-        return f'{self.__endereco}, {self.__numero} - {self.__bairro}, {self.__cidade}'
-    
-    @property
-    def departamento(self):
-        return self.__departamento
-    
-    @departamento.setter
-    def departamento(self, novo_departamento):
-        self.__departamento = novo_departamento
-
-    @property
-    def data_nascimento(self):
-        return self.__dataNascimento
-    
-     @classmethod
+   
+    @classmethod
     def get_funcionario_by_id(cls, funcionario_id):
         """Recupera um funcionário do banco de dados pelo ID."""
         with sqlite3.connect('funcionarios.db') as conn:
@@ -288,13 +161,75 @@ class Funcionario():
             return funcionario
         else:
             raise ValueError("Funcionário não encontrado")
-    
-     def adicionar_historico_trabalho(self, cargo_anterior, departamento_anterior, data_inicio, data_fim):
-        """Adiciona um registro ao histórico de trabalho do funcionário."""
-        historico = HistoricoTrabalho(self.id, cargo_anterior, departamento_anterior, data_inicio, data_fim)
-        self.historico_trabalho.append(historico)
 
-    def adicionar_avaliacao(self, data_avaliacao, feedback):
-        """Adiciona uma avaliação de desempenho ao funcionário."""
-        avaliacao = AvaliacaoDesempenho(self.id, data_avaliacao, feedback)
-        self.avaliacoes.append(avaliacao)
+    # def adicionar_avaliacao(self, data_avaliacao, feedback):
+    #     """Adiciona uma avaliação de desempenho ao funcionário."""
+    #     avaliacao = AvaliacaoDesempenho(self.id, data_avaliacao, feedback)
+    #     self.avaliacoes.append(avaliacao)
+    
+    @property
+    def cargo(self):
+        return self.__cargo
+    
+
+    @property
+    def data_contratacao(self):
+        return self.__dataContratacao
+    
+    @property
+    def salario(self):
+        return self.__salario
+    
+
+    @property
+    def cep(self):
+        return self.__cep
+
+    @property
+    def endereco(self):
+        return self.__endereco
+
+    @property
+    def numero(self):
+        return self.__numero
+
+
+    @property
+    def bairro(self):
+        return self.__bairro
+
+
+    @property
+    def cidade(self):
+        return self.__cidade
+
+
+    @property
+    def endereco_completo(self):
+        return f'{self.__endereco}, {self.__numero} - {self.__bairro}, {self.__cidade}'
+    
+    @property
+    def departamento(self):
+        return self.__departamento
+    
+    @departamento.setter
+    def departamento(self, novo_departamento):
+        self.__departamento = novo_departamento
+
+    @property
+    def data_nascimento(self):
+        return self.__dataNascimento
+    
+    @property
+    def endereco(self):
+        return {
+            'cep': self.__cep,
+            'endereco': self.__endereco,
+            'numero': self.__numero,
+            'bairro': self.__bairro,
+            'cidade': self.__cidade
+        }
+
+    @property
+    def telefone(self):
+        return self.__telefone

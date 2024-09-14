@@ -58,8 +58,6 @@ class Candidatura:
         self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
         return entrevistas
 
-
-class HistoricoCandidatura(BaseModel):
     """Classe que armazena o histórico de uma candidatura, incluindo status e entrevistas realizadas."""
 
     def __init__(self, candidatura_id):
@@ -70,8 +68,8 @@ class HistoricoCandidatura(BaseModel):
 
     def adicionar_evento(self, descricao, data=None):
         """Adiciona um evento ao histórico da candidatura (Ex: Entrevista realizada, Feedback dado)."""
-        if data is None:
-            data = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # if data is None:
+        #     data = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         evento = {
             'descricao': descricao,

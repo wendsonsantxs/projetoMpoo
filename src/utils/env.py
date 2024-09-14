@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 class Env:
-    ROOT = Path(__file__).parent.parent
+    ROOT = Path(__file__).parent.parent.parent
     DATABASE_FUNCIONARIO = os.path.join(ROOT, 'database', 'funcionarios.db') 
     DATABASE_TALENTOS = os.path.join(ROOT, 'database', 'banco_de_talentos.db')
     DATABASE_AVALIACOES = os.path.join(ROOT, 'database', 'avaliacoes_funcionario.db')

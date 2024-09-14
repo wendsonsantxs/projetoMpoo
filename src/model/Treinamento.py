@@ -1,8 +1,11 @@
 from utils.util import Util
+from utils.env import Env
+
+import sqlite3
 
 class Treinamento:
     def __init__(self):
-        self.__treinamentoId = Util.gerador_id(7, 41)
+        self.treinamentoId = Util.gerador_id(7, 41)
         self.__titulo = None
         self.__descricao = None
         self.__dataInicio = None
@@ -10,63 +13,6 @@ class Treinamento:
         self.__duracao = None
         self.__participante = {}
         self.__status = Util.status(self.dataInicio, self.dataFim)
-
-    def gerenciarTreinamento(self):
-        pass
-
-    
-    @property
-    def treinamentoId(self):
-        return self.__treinamentoId
-    
-    @treinamentoId.setter
-    def treinamentoId(self, novoId):
-        self.__treinamentoId = novoId
-
-    @property
-    def status(self):
-        return self.__status
-              
-    @property
-    def duracao(self):
-        return self.__duracao
-    
-    @duracao.setter
-    def duracao(self, novaDuracao):
-        self.__duracao = novaDuracao
-
-    @property
-    def participante(self):
-        return self.__participante
-    
-    @participante.setter
-    def participante(self, novoParticipante):
-        self.__participante = novoParticipante
-
-        
-    @property
-    def titulo(self):
-        return self.__titulo
-    
-    @property
-    def descricao(self):
-        return self.__descricao
-    
-    @descricao.setter
-    def descricao(self, novaDescricao):
-        self.__descricao = novaDescricao
-
-    @property
-    def dataInicio(self):
-        return self.__dataInicio
-    
-    @property
-    def dataFim(self):
-        return self.__dataFim
-    
-    @property
-    def descricao(self):
-        return self.__descricao
     
     def remover_participante(self, funcionario_id):
         """Remove um funcionário do treinamento."""
@@ -90,11 +36,11 @@ class Treinamento:
         }
         return resumo
     
-     def criar_tabela_treinamento(cls):
+    def criar_tabela_treinamento(self):
         """Cria a tabela de treinamentos no banco de dados."""
 
 
-        conn =sqlite3.connect(Env.DATABASE_TREINAMENTO)
+        conn = sqlite3.connect(Env.DATABASE_TREINAMENTO)
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS treinamentos (
@@ -109,15 +55,15 @@ class Treinamento:
        
         try:
             cursor.execute('''
-                INSERT INTO treinamentos (titulo, descricao, data_inicio, data_fim, status)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (titulo, descricao, data_inicio, data_fim, status))
+                INSERT INTO treinamentos (id, titulo, descricao, data_inicio, data_fim, status)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (self.treinamentoId, self.__titulotitulo, self.__descricao, self.__dataInicio, self.__dataFim, self.__status))
             conn.commit()
             print("Treinamento adicionado com sucesso!")
         except sqlite3.Error as e:
             print(f"Erro ao inserir dados: {e}")
 
-    def get_treinamento_by_id(cls, treinamento_id):
+    def get_treinamento_by_id(self, treinamento_id):
         """Recupera um treinamento do banco de dados pelo ID."""
         with sqlite3.connect('funcionarios.db') as conn:
             cursor = conn.cursor()
@@ -125,8 +71,8 @@ class Treinamento:
             row = cursor.fetchone()
 
         if row:
-            return cls(
-                titulo=row[1],
+            return self(
+                titulo = row[1],
                 descricao=row[2],
                 data_inicio=row[3],
                 data_fim=row[4],

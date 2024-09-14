@@ -6,10 +6,12 @@ from tkinter import Tk
 
 from ui.window import Window
 from ui.window_state import WindowState
+from model.Vaga import Vaga
 
 class CadastroV(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
+        self.mensage_get = None
     
     def create(self):
         super().create()
@@ -159,10 +161,50 @@ class CadastroV(Window):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_RELACAO_V))
 
     def register_vacancy(self):
-        titulo = self.entry_4.get()
-        requisitos = self.entry_1.get()
-        descricao = self.entry_2.get()
-        data_publicacao = self.entry_3.get()
-        duracao = self.entry_5.get()
-        duracao_selecao = self.entry_5.get()
-        
+
+        if self.entry_1.get() and self.entry_2.get() and self.entry_3.get() and self.entry_4.get() and self.entry_5.get():
+
+            titulo = self.entry_4.get()
+            requisitos = self.entry_1.get()
+            descricao = self.entry_2.get()
+            data_publicacao = self.entry_3.get()
+            duracao_selecao = self.entry_5.get()
+
+            try:
+                vaga = Vaga(titulo, requisitos, descricao, data_publicacao, duracao_selecao)
+                vaga.adicionar_vaga()
+
+            except ValueError as e:
+                if self.mensage_get:
+                    self.canvas.delete(self.mensage_get)
+                self.mensage_get = self.canvas.create_text(
+                    600.0, 
+                    174.0,  
+                    anchor="nw", 
+                    text=f"* {e}", 
+                    fill="#FF0000",
+                    font=("Itim Regular", 18 * -1)
+                    )
+                return
+
+            if self.mensage_get:
+                self.canvas.delete(self.mensage_get)
+            self.mensage_get = self.canvas.create_text(
+                    600.0, 
+                    174.0,  
+                    anchor="nw", 
+                    text="* Cadastro realizado com sucesso", 
+                    fill="#008c00",
+                    font=("Itim Regular", 18 * -1)
+                    )
+
+        else:
+            if not self.mensage_get:
+                self.mensage_get = self.canvas.create_text(
+                        600.0, 
+                        176.0,  
+                        anchor="nw", 
+                        text="Preencha todos os campos (*)", 
+                        fill="#FF0000",
+                        font=("Itim regular", 18 * -1)
+                        )
