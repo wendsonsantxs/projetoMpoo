@@ -74,43 +74,7 @@ class VagasAtiva(Window):
             fill="#FFFFFF",
             font=("Alata Regular", 14 * -1)
             )
-        
-        self.entry_image_1 = PhotoImage(file=self.assets("entry4_2.png"))
-        self.entry_bg_1 = self.canvas.create_image(
-            590.0, 168.0, image=self.entry_image_1)
-        self.entry_1 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=(
-            "IBMPlexSansCond Regular", 16 * -1))
-        self.entry_1.place(
-            x=505.0,
-            y=152.0,
-            width=182.0,
-            height=33.0)
-        
-        self.button_image_2 = PhotoImage(file = self.assets("button_4.png"))
-        self.button_2 = Button(
-            image = self.button_image_2,
-            borderwidth = 0,
-            highlightthickness = 0,
-            command = self.button_back,
-            relief = "flat"
-        )
-        self.button_2.place( x=690.0, y=150.0,  width=32.0, height=37.0)
-
-        self.entry_placeholder = "Digite aqui..."
-        self.entry_1.insert(0, self.entry_placeholder)
-        self.entry_1.bind("<FocusIn>", self.clear_placeholder)
-        self.entry_1.bind("<FocusOut>", self.add_placeholder)
-
-    def clear_placeholder(self):
-        if self.entry_1.get() == self.entry_placeholder:
-            self.entry_1.delete(0, "end")
-            self.entry_1.config(fg="#000000")
-
-    def add_placeholder(self):
-        if not self.entry_1.get():
-            self.entry_1.insert(0, self.entry_placeholder)
-            self.entry_1.config(fg="#000716")
-       
+               
     def button_back(self):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_PESQUISAR_V))
 

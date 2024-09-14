@@ -100,14 +100,14 @@ class RemoverV(Window):
         self.button_2.place( x=705.1, y=151.0,  width=34.0, height=37.0)
 
     def button_back(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_F))
+        self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_V))
 
-    def clear_placeholder(self):
-        if self.entry_1.get() == self.entry_placeholder:
-            self.entry_1.delete(0, "end")
-            self.entry_1.config(fg="#000000")
+    def clear_placeholder(self, event):
+        if self.entry.get() == self.entry_placeholder:
+            self.entry.delete(0, "end")
+            self.entry.config(fg="#000000")
 
-    def add_placeholder(self):
-        if not self.entry_1.get():
-            self.entry_1.insert(0, self.entry_placeholder)
-            self.entry_1.config(fg="#000716")
+    def add_placeholder(self, event):
+        if not self.entry.get():
+            self.entry.insert(0, self.entry_placeholder)
+            self.entry.config(fg="#000716")

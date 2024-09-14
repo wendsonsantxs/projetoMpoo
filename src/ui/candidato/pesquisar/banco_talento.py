@@ -7,14 +7,14 @@ from tkinter import Entry
 from ui.window import Window
 from ui.window_state import WindowState
 
-class RemoverT(Window):
+class BancoT(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
 
     def create(self):
         super().create()
-        self.canvas = Canvas( self.root, bg = "#FFFFFF", height = self.height, width = self.width, bd = 0, 
-                             highlightthickness = 0, relief = "ridge")
+        self.canvas = Canvas( self.root, bg = "#FFFFFF", height = 825, width = 825, 
+                             bd = 0, highlightthickness = 0, relief = "ridge")
 
         self.canvas.place(x = 0, y = 0)
         self.bg = PhotoImage(file = self.assets("image_1.png"))
@@ -31,15 +31,15 @@ class RemoverT(Window):
             command = self.button_back,
             relief = "flat"
         )
-        self.button_1.place( x=105.0, y=137.0,  width=64.0, height=55.0)
+        self.button_1.place( x=110.0, y=140.0,  width=64.0, height=55.0)
 
         self.canvas.create_text(
-            180.0,
-            149.0,
+            189.0,
+            147.0,
             anchor="nw",
-            text="Remover Treinamento",
+            text="Banco de Talentos",
             fill="#FFFFFF",
-            font=("IBMPlexSansCond Regular", 32 * -1))
+            font=("IBMPlexSansCond Regular", 36 * -1))
 
         self.image_image_3 = PhotoImage(file = self.assets("image_3.png"))
         self.image_3 = self.canvas.create_image(284.0,  62.0,  image=self.image_image_3)
@@ -74,39 +74,10 @@ class RemoverT(Window):
             font=("Alata Regular", 14 * -1)
             )
         
-        self.entry_image = PhotoImage(file=self.assets("entry4_2.png"))
-        self.entry_bg = self.canvas.create_image(605.0, 170.0, image=self.entry_image)
-        self.entry = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=("IBMPlexSansCond Regular", 16 * -1))
-        self.entry.place(
-            x=510.0,
-            y=154.0,
-            width=182.0,
-            height=33.0)
         
-        self.entry_placeholder = "Digite o ID"
-        self.entry.insert(1, self.entry_placeholder)
-        self.entry.bind("<FocusIn>", self.clear_placeholder)
-        self.entry.bind("<FocusOut>", self.add_placeholder) 
+    def clear_placeholder(self):
+        if self.entry_1.get() == self.entry_placeholder:
+            self.entry_1.delete(0, "end")
+            self.entry_1.config(fg="#000000")
 
-        self.button_image_2 = PhotoImage(file = self.assets("button_4.png"))
-        self.button_2 = Button(
-            image = self.button_image_2,
-            borderwidth = 0,
-            highlightthickness = 0,
-            command = self.button_back,
-            relief = "flat"
-        )
-        self.button_2.place( x=705.1, y=151.0,  width=34.0, height=37.0)
-
-    def button_back(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_T))
-
-    def clear_placeholder(self, event):
-        if self.entry.get() == self.entry_placeholder:
-            self.entry.delete(0, "end")
-            self.entry.config(fg="#000000")
-
-    def add_placeholder(self, event):
-        if not self.entry.get():
-            self.entry.insert(0, self.entry_placeholder)
-            self.entry.config(fg="#000716")
+    

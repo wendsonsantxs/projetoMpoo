@@ -6,11 +6,16 @@ from tkinter import PhotoImage
 from ui.window import Window
 from ui.window_state import WindowState
 
-from ui.candidato.cadastro import CadastroWindow
+from ui.candidato.cadastro import CadastroCandidato
+from ui.candidato.remover import RemoverC
+from ui.candidato.pesquisar.window import PesquisarWindow
 
 class CandidatoWindow(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
+        WindowState.set_window(WindowState.ID_CADASTRO_C, CadastroCandidato(root=self.root))
+        WindowState.set_window(WindowState.ID_REMOVER_C, RemoverC(root=self.root))
+        WindowState.set_window(WindowState.ID_PESQUISAR_C, PesquisarWindow(root=self.root))
 
     def create(self):
         super().create()
@@ -42,7 +47,7 @@ class CandidatoWindow(Window):
             image=self.button_image_1,
             borderwidth=0,
             highlightthickness=0,
-            command= self.button_1,
+            command= self.button1,
             relief="flat"
         )
         self.button_1.place(x=494.0, y=307.0, width=172.0, height=60.0)
@@ -52,7 +57,7 @@ class CandidatoWindow(Window):
             image=self.button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: print("button_2 clicked"),
+            command= self.button2,
             relief="flat"
         )
         self.button_2.place(x=494.0, y=464.0, width=172.0, height=60.0)
@@ -62,7 +67,7 @@ class CandidatoWindow(Window):
             image=self.button_image_3,
             borderwidth=0,
             highlightthickness=0,
-            command= self.button_3,
+            command= self.button3,
             relief="flat"
         )
         self.button_3.place(x=494.0, y=618.0, width=172.0, height=60.0)
@@ -86,10 +91,10 @@ class CandidatoWindow(Window):
         )
 
         self.canvas.create_text(
-            201.0,
+            190.0,
             629.0,
             anchor="nw",
-            text="Banco De Talentos",
+            text="Pesquisar Candidato",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
@@ -129,14 +134,14 @@ class CandidatoWindow(Window):
         )
         self.button_4.place(x=169.0, y=201.0, width=64.0, height=55.0)
 
-    def button_1(self):
-        print("button_1 clicked")
+    def button1(self):
+        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_CADASTRO_C))
     
-    def button_2(self):
-        print("button_2 clicked")
+    def button2(self):
+        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_REMOVER_C))
 
-    def button_3(self):
-        print("button_3 clicked")
+    def button3(self):
+        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_PESQUISAR_C))
 
     def button_back(self):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_RELACAO_V))

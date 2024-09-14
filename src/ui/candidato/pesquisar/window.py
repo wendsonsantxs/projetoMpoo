@@ -5,17 +5,15 @@ from tkinter import Button
 
 from ui.window import Window
 from ui.window_state import WindowState
-from ui.vagas.pesquisar.vaga import VagaPesquisar
-from ui.vagas.pesquisar.ativas import VagasAtiva
-from ui.vagas.pesquisar.banco import BancoV
+from ui.candidato.pesquisar.candidato import CandidatoPesquisar
+from ui.candidato.pesquisar.banco_talento import BancoT
 
 
 class PesquisarWindow(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
-        WindowState.set_window(WindowState.ID_VAGA_PESQUISAR, VagaPesquisar(root=self.root))
-        WindowState.set_window(WindowState.ID_VAGA_ATIVA, VagasAtiva(root=self.root))
-        WindowState.set_window(WindowState.ID_BANCO_V, BancoV(root=self.root))
+        WindowState.set_window(WindowState.ID_CANDIDATO_PESQUISAR, CandidatoPesquisar(root=self.root))
+        WindowState.set_window(WindowState.ID_BANCO_TALENTO, BancoT(root=self.root))
 
     def create(self):
         super().create()
@@ -40,10 +38,11 @@ class PesquisarWindow(Window):
             anchor="nw",
             text="Sistema De Gerenciamento De\nRecursos Humanos (Hrms)",
             fill="#FFFFFF",
-            font=("Itim Regular", 30 * -1)
+            font=("Itim Regular", 27 * -1)
         )
 
         self.button_image_1 = PhotoImage(file=self.assets("button_1.png"))
+
         self.button_1 = Button(
             image = self.button_image_1,
             borderwidth = 0,
@@ -51,7 +50,7 @@ class PesquisarWindow(Window):
             command = self.button_P1,
             relief = "flat"
         )
-        self.button_1.place(x=500.0,  y=307.0, width=172.0, height=60.0)
+        self.button_1.place(x=500.0, y=370.0, width=172.0, height=60.0)
 
         self.button_2 = Button(
             image = self.button_image_1,
@@ -60,50 +59,32 @@ class PesquisarWindow(Window):
             command = self.button_P2,
             relief = "flat"
         )
-        self.button_2.place(x=500.0, y=470.0, width=172.0, height=60.0)
-
-        self.button_3 = Button(
-            image = self.button_image_1,
-            borderwidth = 0,
-            highlightthickness = 0,
-            command = self.button_P3,
-            relief = "flat"
-        )
-        self.button_3.place(x=500.0, y=618.0, width=172.0, height=60.0)
+        self.button_2.place(x=500.0, y=545.0, width=172.0, height=60.0)
 
         self.canvas.create_text(
             249.0,
-            210.0,
+            205.0,
             anchor="nw",
             text="Pesquisar",
             fill="#FFFFFF",
             font=("Itim Regular", 33 * -1)
         )
 
-
+    
         self.canvas.create_text(
-            223.0,
-            323,
+            200,
+            380,
             anchor="nw",
-            text="Pesquisar Vaga",
-            fill="#FFFFFF",
-            font=("Itim Regular", 30 * -1)
-        )
-
-        self.canvas.create_text(
-            242,
-            480,
-            anchor="nw",
-            text="Vagas Ativas",
+            text="Pesquisar Candidato",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
 
         self.canvas.create_text(
             200.0,
-            637.0,
+            555.0,
             anchor="nw",
-            text="Banco De Vagas",
+            text="Banco De Talentos",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
@@ -133,9 +114,9 @@ class PesquisarWindow(Window):
             font=("Alata Regular", 14 * -1)
         )
 
-        self.button_image_3 = PhotoImage(file = self.assets("button_2.png"))
+        self.button_image_2 = PhotoImage(file = self.assets("button_2.png"))
         self.button_3 = Button(
-            image=self.button_image_3,
+            image=self.button_image_2,
             borderwidth=0,
             highlightthickness=0,
             command=self.button_back,
@@ -145,13 +126,10 @@ class PesquisarWindow(Window):
 
 
     def button_P1(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_VAGA_PESQUISAR))
+        self.switch_window(WindowState.get_window(WindowState.ID_CANDIDATO_PESQUISAR))
 
     def button_P2(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_VAGA_ATIVA))
-
-    def button_P3(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_BANCO_V))
+        self.switch_window(WindowState.get_window(WindowState.ID_BANCO_TALENTO))
 
     def button_back(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_V))
+        self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_C))

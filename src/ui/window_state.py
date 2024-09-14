@@ -32,7 +32,10 @@ class WindowState:
     
     ID_RELACAO_C = '24' # Relacao de Candidatos
     ID_CADASTRO_C = '25' # Cadastro de Candidatos
-    ID_BANCO_TALENTO = '26' # Banco de Talentos
+    ID_REMOVER_C = '26' # Remover Candidatos
+    ID_PESQUISAR_C = '27' # relação de Pesquisar Candidato
+    ID_CANDIDATO_PESQUISAR = '28' # Pesquisar Candidato
+    ID_BANCO_TALENTO = '29' # Banco de Talentos
     
 
     state: dict[str, Window] = {}

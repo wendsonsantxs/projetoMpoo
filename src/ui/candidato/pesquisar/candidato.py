@@ -7,7 +7,7 @@ from tkinter import Entry
 from ui.window import Window
 from ui.window_state import WindowState
 
-class RemoverT(Window):
+class CandidatoPesquisar(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
 
@@ -31,15 +31,15 @@ class RemoverT(Window):
             command = self.button_back,
             relief = "flat"
         )
-        self.button_1.place( x=105.0, y=137.0,  width=64.0, height=55.0)
+        self.button_1.place( x=105.0, y=140.0,  width=64.0, height=55.0)
 
         self.canvas.create_text(
-            180.0,
+            189.0,
             149.0,
             anchor="nw",
-            text="Remover Treinamento",
+            text="Pesquisar Candidato",
             fill="#FFFFFF",
-            font=("IBMPlexSansCond Regular", 32 * -1))
+            font=("IBMPlexSansCond Regular", 30 * -1))
 
         self.image_image_3 = PhotoImage(file = self.assets("image_3.png"))
         self.image_3 = self.canvas.create_image(284.0,  62.0,  image=self.image_image_3)
@@ -99,7 +99,7 @@ class RemoverT(Window):
         self.button_2.place( x=705.1, y=151.0,  width=34.0, height=37.0)
 
     def button_back(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_T))
+        self.switch_window(WindowState.get_window(WindowState.ID_PESQUISAR_C))
 
     def clear_placeholder(self, event):
         if self.entry.get() == self.entry_placeholder:

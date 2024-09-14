@@ -77,18 +77,18 @@ class FolhaPagamento(Window):
         self.entry_image_1 = PhotoImage(file=self.assets("entry4_2.png"))
         self.entry_bg_1 = self.canvas.create_image(
             605.0, 168.0, image=self.entry_image_1)
-        self.entry_1 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=(
+        self.entry = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=(
             "IBMPlexSansCond Regular", 16 * -1))
-        self.entry_1.place(
+        self.entry.place(
             x=520.0,
             y=152.0,
             width=182.0,
             height=33.0)
         
         self.entry_placeholder = "Digite aqui..."
-        self.entry_1.insert(0, self.entry_placeholder)
-        self.entry_1.bind("<FocusIn>", self.clear_placeholder)
-        self.entry_1.bind("<FocusOut>", self.add_placeholder)
+        self.entry.insert(0, self.entry_placeholder)
+        self.entry.bind("<FocusIn>", self.clear_placeholder)
+        self.entry.bind("<FocusOut>", self.add_placeholder)
         
         self.button_image_2 = PhotoImage(file = self.assets("button_4.png"))
         self.button_2 = Button(
@@ -103,12 +103,12 @@ class FolhaPagamento(Window):
     def button_back(self):
         self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_F))
 
-    def clear_placeholder(self):
-        if self.entry_1.get() == self.entry_placeholder:
-            self.entry_1.delete(0, "end")
-            self.entry_1.config(fg="#000000")
+    def clear_placeholder(self, event):
+        if self.entry.get() == self.entry_placeholder:
+            self.entry.delete(0, "end")
+            self.entry.config(fg="#000000")
 
-    def add_placeholder(self):
-        if not self.entry_1.get():
-            self.entry_1.insert(0, self.entry_placeholder)
-            self.entry_1.config(fg="#000716")
+    def add_placeholder(self, event):
+        if not self.entry.get():
+            self.entry.insert(0, self.entry_placeholder)
+            self.entry.config(fg="#000716")
