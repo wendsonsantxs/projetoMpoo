@@ -37,9 +37,12 @@ class FolhaPagamento:
         else:
             return False
         
-    def verificarFuncionario(self):
-        ...
-        
+    def verificarFuncionario(self, funcionarioId):
+        if funcionarioId > 0:
+            return funcionarioId
+        else:
+            raise ValueError("Funcionário inválido.")
+
 
     def verificarSalario(self):
         if self.salarioBase > 0:
@@ -56,6 +59,7 @@ class FolhaPagamento:
     def pagamentoId(self, novoId):
         self.__pagamentoId = novoId
 
+    @property
     def funcionarioId(self):
         return self.__funcionarioId
     
@@ -72,7 +76,7 @@ class FolhaPagamento:
         return self.__dataPagamento
     
     @dataPagamento.setter
-    def dataPagamentoi(self, novaData):
+    def dataPagamento(self, novaData):
         self.__dataPagamento = novaData
 
     @property

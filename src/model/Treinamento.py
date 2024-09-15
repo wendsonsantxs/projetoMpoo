@@ -11,10 +11,11 @@ class Treinamento:
         self.__duracao = None
         self.__participante = {}
         self.__status = Util.status(self.dataInicio, self.dataFim)
+        self.__participantes = [] # Lista de IDS de funcionários participantes
 
     def adicionar_participante(self, funcionario_id):
         """Adiciona um funcionário ao treinamento e salva no banco de dados."""
-        if funcionario_id not in self.participantes:
+        if funcionario_id not in self.__participantes:
             self.participantes.append(funcionario_id)
             self.progresso[funcionario_id] = 0
             with sqlite3.connect('treinamentos.db') as conn:

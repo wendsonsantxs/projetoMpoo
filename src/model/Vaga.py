@@ -12,8 +12,7 @@ class Vaga:
         self.dataPublicacao = dataPublicacao
         self.dataSelecao = dataSelecao
         self.__status= Util.status(dataPublicacao, dataSelecao)
-
-
+        self.__candidaturas = []  # Lista para armazenar as candidaturas associadas à vaga
 
 
     def gerarVagaId(self):
@@ -87,7 +86,7 @@ class Vaga:
     @classmethod
     def get_vaga_by_id(cls, vaga_id):
         """Recupera uma vaga do banco de dados pelo ID."""
-        with sqlite3.connect('funcionarios.db') as conn:
+        with sqlite3.connect('vagas.db') as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM vagas WHERE id=?", (vaga_id,))
             row = cursor.fetchone()
@@ -113,3 +112,11 @@ class Vaga:
                 'aprovadas': candidaturas_aprovadas,
                 'rejeitadas': candidaturas_rejeitadas
             }
+    
+    def adicionar_candidatura(self, candidatura):
+        """Adiciona uma candidatura a esta vaga."""
+        self.__candidaturas.append(candidatura)
+
+    def listar_candidaturas(self):
+        """Retorna a lista de candidaturas associadas à vaga."""
+        return self.__candidaturas

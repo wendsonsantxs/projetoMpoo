@@ -4,11 +4,11 @@ from datetime import datetime
 class RegistroPonto:
     def __init__(self, funcionarioId, data, horaEntrada, horaSaida, horasTrabalhadas):
         self.__pontoId= Util.gerador_id(6, 839)
-        self.__funcionarioId= self.verificar_funcionario(funcionarioId)
+        self.__funcionarioId= self.verificar_funcionario(funcionarioId) # Relacionamento com funcionario
         self.data= data
         self.__horaEntrada= horaEntrada
         self.__horaSaida= horaSaida
-        self.__horasTrabalhadas= horasTrabalhadas
+        self.__horasTrabalhadas= None
  
 
     def registrar_entrada(self):
@@ -20,6 +20,7 @@ class RegistroPonto:
     def calcular_horas_trabalhadas(self):
         if self.entrada and self.saida:
             self.horasTrabalhadas = (self.saida - self.entrada).total_seconds() / 3600
+
 
     def verificar_funcionario(self):
         if self.funcionarioId > 0:
@@ -39,7 +40,7 @@ class RegistroPonto:
             return True
         else:
             return False
-        
+
     @property
     def pontoId(self):
         return self.__pontoId
@@ -55,6 +56,7 @@ class RegistroPonto:
     @horasTrabalhadas.setter
     def horasTrabalhadas(self, novaHora):
         self.__horasTrabalhadas = novaHora
+    
     @property
     def funcionarioId(self):
         return self.__funcionarioId

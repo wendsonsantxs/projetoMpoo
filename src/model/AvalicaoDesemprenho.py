@@ -9,12 +9,16 @@ class AvaliacaoDesempenho:
         
   
     
-    def validarFuncionario(self):
-        if self.funcionarioId > 0:
-            return True
+    def validarFuncionario(self, funcionarioId):
+        if funcionarioId > 0:
+            return funcionarioId
         else:
-            return False
-        
+            raise ValueError("Funcionário inválido")
+
+    @property
+    def funcionarioId(self):
+        return self.__funcionarioId
+
     @property
     def avaliacaoId(self):
         return self.__avaliacaoId
@@ -46,7 +50,7 @@ class AvaliacaoDesempenho:
         return self.__feedback
     
     @feedback.setter
-    def feeedback(self, novoFeedback):
+    def feedback(self, novoFeedback):
         self.__feedback = novoFeedback
 
 
@@ -54,7 +58,7 @@ class AvaliacaoDesempenho:
     @classmethod
     def get_avaliacao_by_id(cls, avaliacao_id):
         """Busca uma avaliação de desempenho no banco de dados pelo ID."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM avaliacao WHERE id=?", (avaliacao_id,))
@@ -75,7 +79,7 @@ class AvaliacaoDesempenho:
 
     def salvar_avaliacao(self):
         """Salva a avaliação de desempenho no banco de dados."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
         cursor = conn.cursor()
 
         cursor.execute("""
@@ -88,7 +92,7 @@ class AvaliacaoDesempenho:
 
     def atualizar_avaliacao(self):
         """Atualiza uma avaliação de desempenho existente no banco de dados."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
         cursor = conn.cursor()
 
         cursor.execute("""

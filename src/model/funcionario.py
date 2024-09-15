@@ -23,7 +23,42 @@ class Funcionario():
         self.numero= numero
         self.bairro= bairro
         self.cidade= cidade
+        self.__treinamentos = []  # Lista de treinamentos que o funcionário participa
+        self.__avaliacoes = []  # Lista de avaliações de desempenho
+        self.registroPonto = None  # Relacionamento 1:1 com o registro de ponto
+        self.folhaPagamento = None  # Relacionamento 1:1 com folha de pagamento
 
+    def adicionar_treinamento(self, treinamento):
+        """Associa um treinamento ao funcionário."""
+        self.__treinamentos.append(treinamento)
+        treinamento.adicionar_participante(self.__funcionarioId)
+
+    def adicionar_avaliacao(self, avaliacao):
+        """Adiciona uma avaliação de desempenho ao funcionário."""
+        self.__avaliacoes.append(avaliacao)
+        avaliacao.adicionar_participante(self.__funcionarioId)
+
+    def registrar_ponto(self, registro):
+        """Associa um registro de ponto ao funcionário."""
+        self.__registroPonto = registro
+        registro.adicionar_funcionario(self.__funcionarioId)
+
+    def associar_folha_pagamento(self, folhaPagamento):
+        """Associa uma folha de pagamento ao funcionário."""
+        self.__folhaPagamento = folhaPagamento
+        folhaPagamento.adicionar_funcionario(self.__funcionarioId)
+
+    @property
+    def registroPonto(self):
+        return self.__registroPonto
+
+    @property
+    def avaliacoes(self):
+        return self.__avaliacoes
+
+    @property
+    def folhaPagamento(self):
+        return self.__folhaPagamento
 
     # def treinar(self, treinamento_id):
     #     """Adiciona um funcionário ao treinamento."""
