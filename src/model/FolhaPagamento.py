@@ -94,14 +94,14 @@ class FolhaPagamento:
     # @property
     # def deducoes(self):
     #     return self.__deducoes
+    @property
+    def salarioLiquido(self):
+        return self.__salarioLiquido
     
     @salarioLiquido.setter
     def salarioLiquido(self, novoSalario):
         self.__salarioLiquido = novoSalario
 
-    @property   
-    def salarioLiquido(self):
-        return self.__salarioLiquido
     
     @classmethod
     def get_folha_pagamento_by_id(cls, folha_pagamento_id):
