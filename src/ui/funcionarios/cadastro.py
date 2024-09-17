@@ -78,6 +78,11 @@ class CadastroF(Window):
             y=255.0,
             width=182.0,
             height=33.0)
+        
+        self.entry_placeholder_1 = "Ex: 123.456.789-01"
+        self.entry_1.insert(1, self.entry_placeholder_1)
+        self.entry_1.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_1, self.entry_placeholder_1))
+        self.entry_1.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_1, self.entry_placeholder_1))
 
         self.canvas.create_text(
             484.0,
@@ -95,6 +100,11 @@ class CadastroF(Window):
             "IBMPlexSansCond Regular", 16 * -1))
         self.entry_2.place(x=490.0, y=341.0, width=182.0, height=33.0)
 
+        self.entry_placeholder_2 = "Ex: (00)0000-0000"
+        self.entry_2.insert(0, self.entry_placeholder_2)
+        self.entry_2.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_2, self.entry_placeholder_2))
+        self.entry_2.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_2, self.entry_placeholder_2))
+
         self.canvas.create_text(
             648.0,
             440.0,
@@ -110,6 +120,11 @@ class CadastroF(Window):
         self.entry_3 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=(
             "IBMPlexSansCond Regular", 16 * -1))
         self.entry_3.place(x=654.0, y=467.0,  width=182.0, height=33.0)
+
+        self.entry_placeholder_3 = "Ex: 12345-678"
+        self.entry_3.insert(1, self.entry_placeholder_3)
+        self.entry_3.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_3, self.entry_placeholder_3))
+        self.entry_3.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_3, self.entry_placeholder_3))
 
         self.canvas.create_text(
             106.0,
@@ -186,12 +201,21 @@ class CadastroF(Window):
             "IBMPlexSansCond Regular", 16 * -1))  # salario
         self.entry_7.place(x=614.0, y=650.0, width=114.0, height=33.0)
 
+        self.entry_placeholder_7 = "R$ 0000,00"
+        self.entry_7.insert(1, self.entry_placeholder_7)
+        self.entry_7.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_7, self.entry_placeholder_7))
+        self.entry_7.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_7, self.entry_placeholder_7))
+
         self.entry_image_8 = PhotoImage(file=self.assets("entry4_4.png"))
-        self.entry_bg_8 = self.canvas.create_image(
-            819.0, 667.5, image=self.entry_image_8)  # contratação
+        self.entry_bg_8 = self.canvas.create_image(819.0, 667.5, image=self.entry_image_8)  
         self.entry_8 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=(
             "IBMPlexSansCond Regular", 16 * -1))
         self.entry_8.place(x=766.0, y=650.0, width=106.0, height=33.0)
+
+        self.entry_placeholder_8 = "DD/MM/AAAA"
+        self.entry_8.insert(0, self.entry_placeholder_8)
+        self.entry_8.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_8, self.entry_placeholder_8))
+        self.entry_8.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_8, self.entry_placeholder_8))
 
         self.canvas.create_text(
             361.0,
@@ -241,6 +265,11 @@ class CadastroF(Window):
             "IBMPlexSansCond Regular", 16 * -1))
         self.entry_11.place(x=724.0, y=255.0, width=147.0, height=33.0)
 
+        self.entry_placeholder_11 = "DD/MM/AAAA"
+        self.entry_11.insert(1, self.entry_placeholder_11)
+        self.entry_11.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_11, self.entry_placeholder_11))
+        self.entry_11.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_11, self.entry_placeholder_11))
+
         self.canvas.create_text(
             104.0,
             229.0,
@@ -272,6 +301,11 @@ class CadastroF(Window):
         self.entry_13 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font=(
             "IBMPlexSansCond Regular", 16 * -1))
         self.entry_13.place(x=110.0, y=341.0, width=336.0, height=33.0)
+
+        self.entry_placeholder_13 = "Ex: exemplo@gmail.com"
+        self.entry_13.insert(0, self.entry_placeholder_13)
+        self.entry_13.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_13, self.entry_placeholder_13))
+        self.entry_13.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_13, self.entry_placeholder_13))
 
         self.canvas.create_text(
             103.0,
@@ -342,6 +376,19 @@ class CadastroF(Window):
     def button_back(self):
         self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_F))
 
+    def clear_placeholder(self, event, entry, placeholder):
+        
+            if entry.get() == placeholder:
+                entry.delete(0, "end")
+                entry.config(fg="#000000")
+
+    def add_placeholder(self, event, entry, placeholder):
+        
+            if not entry.get():
+                entry.insert(0, placeholder)
+                entry.config(fg="#000716")
+
+
     def register_employee(self):
         
         if self.entry_12.get() and self.entry_13.get() and self.entry_1.get() and self.entry_2.get() and self.entry_14.get() and self.entry_10.get() and self.entry_4.get() and self.entry_9.get() and self.entry_3.get() and self.entry_5.get() and self.entry_6.get() and self.entry_7.get() and self.entry_8.get() and self.entry_11.get():
@@ -362,8 +409,11 @@ class CadastroF(Window):
             data_nascimento = self.entry_11.get()
 
             try:
-                funcionario = Funcionario(nome, email, cpf, telefone, endereco, numero, bairro, 
-                                            cidade, cep, cargo, departamento, salario, contratacao, data_nascimento)
+                funcionario = Funcionario()
+                funcionario.get_dados(nome, email, cpf, telefone, endereco,
+                                  numero, bairro,cidade, cep, cargo,
+                                  departamento, salario, contratacao, data_nascimento)
+                
                 funcionario.adicionar_funcionario()
 
             except ValueError as e:

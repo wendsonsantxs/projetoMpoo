@@ -35,10 +35,10 @@ class HistoricoT(Window):
         self.button_1.place( x=110.0, y=140.0,  width=64.0, height=55.0)
 
         self.canvas.create_text(
-            180.0,
+            183.0,
             150.0,
             anchor="nw",
-            text="Histórico de Treinamentos",
+            text="Banco de Treinamentos",
             fill="#FFFFFF",
             font=("IBMPlexSansCond Regular", 30 * -1))
 
