@@ -6,7 +6,6 @@ from utils.env import Env
 class Treinamento:
     def __init__(self, titulo, descricao, participantes, data_inicio, data_fim, duracao):
         self.__treinamentoId = Util.gerador_id(7, 41)
-<<<<<<< HEAD
         self.__titulo = None
         self.__descricao = None
         self.__dataInicio = None
@@ -19,31 +18,6 @@ class Treinamento:
     def adicionar_participante(self, funcionario_id):
         """Adiciona um funcionário ao treinamento e salva no banco de dados."""
         if funcionario_id not in self.__participantes:
-=======
-        self.__titulo = self.veriricarTitulo(titulo)
-        self.descricao = descricao
-        self.participantes = participantes
-        self.duracao = duracao
-        self.__dataInicio = self.verificarData(data_inicio)
-        self.__dataFim = self.verificarData(data_fim)
-        self.participante = {}
-        self.__status = Util.status('pendente')
-    
-    def verificarData(self, data):
-        if not Util.validar_data(data):
-            raise ValueError("Data inválida.")
-        return data
-
-    def veriricarTitulo(self, titulo):
-        if len(titulo) < 5:
-            raise ValueError("O título deve ter no mínimo 5 caracteres.")
-        return titulo
-
-    def adicionar_participante(self, funcionario_id):
-        """Adiciona um funcionário ao treinamento e salva no banco de dados."""
-        
-        if funcionario_id not in self.participantes:
->>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
             self.participantes.append(funcionario_id)
             conn =sqlite3.connect(Env.DATABASE_TREINAMENTOS)
             cursor = conn.cursor()

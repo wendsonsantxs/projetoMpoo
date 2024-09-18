@@ -1,16 +1,9 @@
 from utils.util import Util
 from utils.env import Env
-<<<<<<< HEAD
 from model.FolhaPagamento import FolhaPagamento
-<<<<<<< HEAD
 from model.Treinamento import *
 from model.RegistroPonto import *
 from model.AvalicaoDesemprenho import *
-=======
-#from Treinamento import Treinamento
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
-=======
->>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
 import sqlite3
 import re
 import requests
@@ -35,10 +28,6 @@ class Funcionario:
         self.__cidade = cidade
         self.__treinamentos = []
         self.__avaliacoes = []
-<<<<<<< HEAD
-=======
-        self.__registroPonto = None # Relacionamento 1:1 com o registro de ponto
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
         self.__folhaPagamento = None  # Relacionamento 1:1 com folha de pagamento
 
     def adicionar_treinamento(self, treinamento):
@@ -49,29 +38,23 @@ class Funcionario:
     def adicionar_avaliacao(self, avaliacao):
         """Adiciona uma avaliação de desempenho ao funcionário."""
         self.__avaliacoes.append(avaliacao)
-<<<<<<< HEAD
         avaliacao.adicionar_avaliacao(self.__funcionarioId)
 
     def registrar_ponto(self):
         """Associa um registro de ponto ao funcionário."""
         RegistroPonto.registrar_entrada(self.__funcionarioId)
-=======
-        avaliacao.adicionar_participante(self.__funcionarioId)
 
     def registrar_ponto(self, registro):
         """Associa um registro de ponto ao funcionário."""
         self.__registroPonto = registro
         registro.adicionar_funcionario(self.__funcionarioId)
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
 
     def associar_folha_pagamento(self, folhaPagamento):
         """Associa uma folha de pagamento ao funcionário."""
         self.__folhaPagamento = folhaPagamento
-<<<<<<< HEAD
         FolhaPagamento.adicionar_folha_pagamento(self.__funcionarioId)
-=======
         folhaPagamento.adicionar_funcionario(self.__funcionarioId)
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
+
 
     @property
     def registroPonto(self):
@@ -106,12 +89,9 @@ class Funcionario:
         else:
             raise ValueError('Nome já cadastrado anteriormente')
 
-<<<<<<< HEAD
-=======
     def treinar(self,titulo, descricao, participantes, data_inicio, data_fim, duracao):
         treinamento = Treinamento(titulo, descricao, participantes, data_inicio, data_fim, duracao)
         treinamento.adicionar_participante(self.funcionarioId)  
->>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
 
     def adicionar_funcionario(self):
         conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)

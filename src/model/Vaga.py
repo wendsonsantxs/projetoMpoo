@@ -89,15 +89,7 @@ class Vaga:
     @classmethod
     def get_vaga_by_id(cls, vaga_id):
         """Recupera uma vaga do banco de dados pelo ID."""
-<<<<<<< HEAD
-<<<<<<< HEAD
         with sqlite3.connect(Env.DATABASE_VAGAS) as conn:
-=======
-        with sqlite3.connect('vagas.db') as conn:
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
-=======
-        with sqlite3.connect(Env.DATABASE_VAGAS) as conn:
->>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM vagas WHERE id=?", (vaga_id,))
             row = cursor.fetchone()
@@ -114,7 +106,6 @@ class Vaga:
             raise ValueError(f"Vaga com ID {vaga_id} não encontrada.")
 
     def gerar_relatorio(self):
-<<<<<<< HEAD
         """Gera um relatório com estatísticas sobre a vaga."""
         total_candidaturas = len(self.__candidaturas)
         candidaturas_aprovadas = sum(1 for c in self.__candidaturas if c.status == 'Aprovado')
@@ -131,26 +122,10 @@ class Vaga:
             self.__candidaturas.append(candidatura)
         else:
             raise ValueError("O parâmetro deve ser uma instância de Candidatura")
-=======
-            """Gera um relatório com estatísticas sobre a vaga."""
-            total_candidaturas = len(self.candidaturas)
-            candidaturas_aprovadas = sum(1 for c in self.candidaturas if c.status == 'Aprovado')
-            candidaturas_rejeitadas = sum(1 for c in self.candidaturas if c.status == 'Rejeitado')
-            return {
-                'total_candidaturas': total_candidaturas,
-                'aprovadas': candidaturas_aprovadas,
-                'rejeitadas': candidaturas_rejeitadas
-            }
-    
-    def adicionar_candidatura(self, candidatura):
-        """Adiciona uma candidatura a esta vaga."""
-        self.__candidaturas.append(candidatura)
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
 
     def listar_candidaturas(self):
         """Retorna a lista de candidaturas associadas à vaga."""
         return self.__candidaturas
-<<<<<<< HEAD
     
     
     def get_entrevistas_agendadas(self):
@@ -175,5 +150,3 @@ class Vaga:
         self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
         return entrevistas
     
-=======
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
