@@ -1,20 +1,24 @@
+import sqlite3
 from utils.util import Util
 
 class AvaliacaoDesempenho:
     def __init__(self, funcionarioId, dataAvalicao, feedback):
         self.__avaliacaoId= Util.gerador_id(7, 24)
         self.__funcionarioId= self.validarFuncionario(funcionarioId)
-        self.dataAvaliacao= dataAvalicao
+        self.__dataAvaliacao= dataAvalicao
         self.feedback= feedback
         
-  
     
-    def validarFuncionario(self):
-        if self.funcionarioId > 0:
-            return True
+    def validarFuncionario(self, funcionarioId):
+        if funcionarioId > 0:
+            return funcionarioId
         else:
-            return False
-        
+            raise ValueError("Funcionário inválido")
+
+    @property
+    def funcionarioId(self):
+        return self.__funcionarioId
+
     @property
     def avaliacaoId(self):
         return self.__avaliacaoId
@@ -46,15 +50,41 @@ class AvaliacaoDesempenho:
         return self.__feedback
     
     @feedback.setter
-    def feeedback(self, novoFeedback):
+    def feedback(self, novoFeedback):
         self.__feedback = novoFeedback
+
+    def adicionar_avaliacao(funcionarioId, dataAvaliacao, feedback):
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
+        cursor = conn.cursor()
+        
+        # Verifica se o funcionário existe
+        cursor.execute("SELECT * FROM funcionario WHERE id=?", (funcionarioId,))
+        funcionario = cursor.fetchone()
+        
+        if funcionario is None:
+            conn.close()
+            raise ValueError(f"Funcionário com ID {funcionarioId} não encontrado.")
+        
+        # Cria uma nova avaliação de desempenho
+        nova_avaliacao = AvaliacaoDesempenho(funcionarioId, dataAvaliacao, feedback)
+        
+        # Insere a avaliação no banco de dados
+        cursor.execute("""
+            INSERT INTO avaliacao (id, funcionario_id, data_avaliacao, feedback)
+            VALUES (?, ?, ?, ?)
+        """, (nova_avaliacao.avaliacaoId, nova_avaliacao.funcionarioId, nova_avaliacao.dataAvaliacao, nova_avaliacao.feedback))
+        
+        conn.commit()
+        conn.close()
+
+        print(f"Avaliação adicionada para o funcionário {funcionarioId} com sucesso.")
 
 
     
     @classmethod
     def get_avaliacao_by_id(cls, avaliacao_id):
         """Busca uma avaliação de desempenho no banco de dados pelo ID."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM avaliacao WHERE id=?", (avaliacao_id,))
@@ -75,7 +105,7 @@ class AvaliacaoDesempenho:
 
     def salvar_avaliacao(self):
         """Salva a avaliação de desempenho no banco de dados."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
         cursor = conn.cursor()
 
         cursor.execute("""
@@ -88,7 +118,7 @@ class AvaliacaoDesempenho:
 
     def atualizar_avaliacao(self):
         """Atualiza uma avaliação de desempenho existente no banco de dados."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect('avaliacoes_funcionario.db')
         cursor = conn.cursor()
 
         cursor.execute("""

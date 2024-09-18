@@ -1,34 +1,86 @@
 from utils.util import Util
 from utils.env import Env
-#from Treinamento import Treinamento
+from model.FolhaPagamento import FolhaPagamento
+from model.Treinamento import *
+from model.RegistroPonto import *
+from model.AvalicaoDesemprenho import *
 import sqlite3
 import re
 import requests
 
-class Funcionario():
-    def __init__(self,nome, email, cpf, telefone, endereco, numero, bairro, 
-                                            cidade, cep, cargo, departamento, salario, contratacao, data_nascimento):
+class Funcionario:
+    def __init__(self, nome, email, cpf, telefone, endereco, numero, bairro, cidade, cep, cargo, departamento, salario, contratacao, data_nascimento):
         self.__funcionarioId = Util.gerador_id(6, 24)
         self.__nome = self.verificaNome(nome)
         self.__cpf = self.verifica_cpf(cpf)
         self.__email = self.valida_email(email)
         self.__telefone = self.verifica_telefone(telefone)
         self.__dataNascimento = self.verificaDataNascimento(data_nascimento)
-        self.cargo = cargo
-        self.departamento = departamento
-        self.dataContratacao= contratacao
-        self.__salario= self.verificarSalario(salario)
+        self.__cargo = cargo
+        self.__departamento = departamento
+        self.__dataContratacao = contratacao
+        self.__salario = self.verificarSalario(salario)
         self.__cep = self.verifica_cep(cep)
-        self.endereco= endereco
-        self.numero= numero
-        self.bairro= bairro
-        self.cidade= cidade
+        self.__endereco = endereco
+        self.__numero = numero
+        self.__bairro = bairro
+        self.__cidade = cidade
+        self.__treinamentos = []
+        self.__avaliacoes = []
+        self.__folhaPagamento = None  # Relacionamento 1:1 com folha de pagamento
 
+    def adicionar_treinamento(self, treinamento):
+        """Associa um treinamento ao funcionário."""
+        self.__treinamentos.append(treinamento)
+        treinamento.adicionar_participante(self.__funcionarioId)
 
-    # def treinar(self, treinamento_id):
-    #     """Adiciona um funcionário ao treinamento."""
-    #     treinamento = Treinamento.get_treinamento_by_id(treinamento_id)
-    #     treinamento.adicionar_participante(self.funcionarioId)  
+    def adicionar_avaliacao(self, avaliacao):
+        """Adiciona uma avaliação de desempenho ao funcionário."""
+        self.__avaliacoes.append(avaliacao)
+        avaliacao.adicionar_avaliacao(self.__funcionarioId)
+
+    def registrar_ponto(self):
+        """Associa um registro de ponto ao funcionário."""
+        RegistroPonto.registrar_entrada(self.__funcionarioId)
+
+    def associar_folha_pagamento(self, folhaPagamento):
+        """Associa uma folha de pagamento ao funcionário."""
+        self.__folhaPagamento = folhaPagamento
+        FolhaPagamento.adicionar_folha_pagamento(self.__funcionarioId)
+
+    @property
+    def registroPonto(self):
+        return self.registroPonto
+
+    @registroPonto.setter
+    def registroPonto(self, valor, registroPonto):
+        if isinstance(valor, registroPonto) or valor is None:
+            self.__registroPonto = valor
+        else:
+            raise ValueError("Valor deve ser uma instância de RegistroPonto ou None")
+
+    @property
+    def folhaPagamento(self):
+        return self.__folhaPagamento
+
+    @folhaPagamento.setter
+    def folhaPagamento(self, valor):
+        if valor is None or isinstance(valor, FolhaPagamento):
+            self.__folhaPagamento = valor
+        else:
+            raise ValueError("Valor deve ser uma instância de FolhaPagamento ou None")
+
+    @property
+    def nome(self):
+        return self.__nome
+
+    @nome.setter
+    def nome(self, novo_nome):
+        if novo_nome != self.__nome:
+            self.__nome = self.verificaNome(novo_nome)
+        else:
+            raise ValueError('Nome já cadastrado anteriormente')
+
 
     def adicionar_funcionario(self):
         conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
@@ -59,7 +111,7 @@ class Funcionario():
                            numero, bairro, cidade, cargo, departamento, data_contratacao, salario)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ''', (self.funcionarioId, self.nome, self.cpf, self.email, self.data_nascimento, self.telefone, self.cep, self.endereco, 
-                  self.numero, self.bairro, self.cidade, self.cargo, self.departamento, self.dataContratacao, self.salario))
+                  self.numero, self.bairro, self.cidade, self.cargo, self.departamento, self.data_contratacao, self.salario))
             
             conn.commit()
             conn.close()
@@ -151,10 +203,10 @@ class Funcionario():
     @property
     def funcionarioId(self):
         return self.__funcionarioId
-    
+
     @funcionarioId.setter
-    def funcionarioId(self, novo_id):
-        self.__funcionarioId = novo_id
+    def funcionarioId(self, novoId):
+        self.__funcionarioId = novoId
 
     @property
     def cpf(self):
@@ -341,6 +393,3 @@ class Funcionario():
     #     """Adiciona uma avaliação de desempenho ao funcionário."""
     #     avaliacao = AvaliacaoDesempenho(self.id, data_avaliacao, feedback)
     #     self.avaliacoes.append(avaliacao)
-
-
-

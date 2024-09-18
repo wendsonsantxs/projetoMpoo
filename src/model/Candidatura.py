@@ -1,6 +1,7 @@
 from utils.util import Util
 from utils.env import Env
-
+from model.Vaga import Vaga
+from model.funcionario import *
 import sqlite3
 
 class Candidatura:
@@ -10,15 +11,16 @@ class Candidatura:
         self.candidatoNome= candidatoNome
         self.status= Util.status()
      
+    def associar_vaga(self, vaga):
+        """Associa a candidatura a uma vaga e registra a candidatura."""
+        self.__vagaId = vaga.vagaId
+        vaga.adicionar_candidatura(self.__candidatoId)
 
-
-    
-
-    def verificarVagaId(self):
-        if self.vagaId > 0:
-            return True
+    def verificarVagaId(self, vagaId):
+        if vagaId > 0:
+            return vagaId
         else:
-            return False
+            raise ValueError("Vaga inválida.")
         
     @property
     def candidatoId(self):
@@ -48,10 +50,25 @@ class Candidatura:
     def adicionar_candidato(self):
         conn = sqlite3.connect(Env.DATABASE_TALENTOS)
         cursor = conn.cursor()
+
+        cursor.execute("""
+        INSERT INTO candidaturas (id, vaga_id, nome, status)
+        VALUES (?, ?, ?, ?)
+        """, (self.candidatoId, self.vagaId, self.candidatoNome, self.status))
+
+        conn.commit()
+        conn.close()
+
         
 
     def remover_candidato(self):
-        pass
+        conn = sqlite3.connect(Env.DATABASE_TALENTOS)
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM candidaturas WHERE id=?", (self.candidatoId,))
+        conn.commit()
+        conn.close()
+
 
     def get_entrevistas_agendadas(self):
         """Recupera entrevistas agendadas do banco de dados e atualiza a lista local."""
@@ -74,57 +91,3 @@ class Candidatura:
 
         self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
         return entrevistas
-
-
-class HistoricoCandidatura(BaseModel):
-    """Classe que armazena o histórico de uma candidatura, incluindo status e entrevistas realizadas."""
-
-    def __init__(self, candidatura_id):
-        super().__init__()
-        self.id = self.gerador_id(85)
-        self.candidatura_id = candidatura_id
-        self.eventos = []
-
-    def adicionar_evento(self, descricao, data=None):
-        """Adiciona um evento ao histórico da candidatura (Ex: Entrevista realizada, Feedback dado)."""
-        if data is None:
-            data = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-        evento = {
-            'descricao': descricao,
-            'data': data
-        }
-        self.eventos.append(evento)
-
-        # Inserir no banco de dados
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT INTO eventos (historico_id, descricao, data)
-            VALUES (?, ?, ?)
-        """, (self.id, descricao, data))
-
-        conn.commit()
-        conn.close()
-
-    def get_eventos(self):
-        """Recupera os eventos do banco de dados e atualiza a lista de eventos."""
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM eventos WHERE historico_id=?", (self.id,))
-        rows = cursor.fetchall()
-
-        conn.close()
-
-        eventos = []
-        for row in rows:
-            evento = {
-                'descricao': row[2],  # Supondo que a coluna 2 seja a descrição
-                'data': row[3]  # Supondo que a coluna 3 seja a data
-            }
-            eventos.append(evento)
-
-        self.eventos = eventos  # Atualiza a lista local de eventos com os dados do banco
-        return eventos

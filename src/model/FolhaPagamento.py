@@ -1,3 +1,4 @@
+
 import re
 import sqlite3
 from utils.util import Util
@@ -37,9 +38,12 @@ class FolhaPagamento:
         else:
             return False
         
-    def verificarFuncionario(self):
-        ...
-        
+    def verificarFuncionario(self, funcionarioId):
+        if funcionarioId > 0:
+            return funcionarioId
+        else:
+            raise ValueError("Funcionário inválido.")
+
 
     def verificarSalario(self):
         if self.salarioBase > 0:
@@ -56,6 +60,7 @@ class FolhaPagamento:
     def pagamentoId(self, novoId):
         self.__pagamentoId = novoId
 
+    @property
     def funcionarioId(self):
         return self.__funcionarioId
     
@@ -72,7 +77,7 @@ class FolhaPagamento:
         return self.__dataPagamento
     
     @dataPagamento.setter
-    def dataPagamentoi(self, novaData):
+    def dataPagamento(self, novaData):
         self.__dataPagamento = novaData
 
     @property
@@ -90,14 +95,14 @@ class FolhaPagamento:
     # @property
     # def deducoes(self):
     #     return self.__deducoes
+    @property
+    def salarioLiquido(self):
+        return self.__salarioLiquido
     
     @salarioLiquido.setter
     def salarioLiquido(self, novoSalario):
         self.__salarioLiquido = novoSalario
 
-    @property   
-    def salarioLiquido(self):
-        return self.__salarioLiquido
     
     @classmethod
     def get_folha_pagamento_by_id(cls, folha_pagamento_id):
@@ -122,3 +127,28 @@ class FolhaPagamento:
             return folha_pagamento
         else:
             raise ValueError(f"Folha de pagamento com ID {folha_pagamento_id} não encontrada.")
+        
+    def adicionar_folha_pagamento(self):
+        """Adiciona a folha de pagamento ao funcionário no banco de dados."""
+        conn = sqlite3.connect('funcionarios.db')
+        cursor = conn.cursor()
+
+        # Verifica se o funcionário existe
+        cursor.execute("SELECT * FROM funcionario WHERE id=?", (self.funcionarioId,))
+        funcionario = cursor.fetchone()
+        
+        if funcionario is None:
+            conn.close()
+            raise ValueError(f"Funcionário com ID {self.funcionarioId} não encontrado.")
+        
+        # Insere a folha de pagamento no banco de dados
+        cursor.execute("""
+            INSERT INTO folha_pagamento (id, funcionario_id, data_pagamento, salario_base, bonus, deducoes, salario_liquido)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (self.pagamentoId, self.funcionarioId, self.dataPagamento, self.salarioBase,
+              self.bonus, self.deducoes, self.salarioLiquido))
+
+        conn.commit()
+        conn.close()
+
+        print(f"Folha de pagamento adicionada para o funcionário {self.funcionarioId} com sucesso.")
