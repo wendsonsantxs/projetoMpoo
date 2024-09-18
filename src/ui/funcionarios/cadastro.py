@@ -365,7 +365,6 @@ class CadastroF(Window):
                 funcionario = Funcionario(nome, email, cpf, telefone, endereco, numero, bairro, 
                                             cidade, cep, cargo, departamento, salario, contratacao, data_nascimento)
                 funcionario.adicionar_funcionario()
-
             except ValueError as e:
                 if self.mensage_get:
                     self.canvas.delete(self.mensage_get)
