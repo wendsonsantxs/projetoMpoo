@@ -1,10 +1,7 @@
 from utils.util import Util
 from utils.env import Env
-<<<<<<< HEAD
 from model.Vaga import Vaga
 from model.funcionario import *
-=======
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
 import sqlite3
 
 class Candidatura:
@@ -15,15 +12,9 @@ class Candidatura:
         self.status= Util.status()
      
     def associar_vaga(self, vaga):
-<<<<<<< HEAD
         """Associa a candidatura a uma vaga e registra a candidatura."""
         self.__vagaId = vaga.vagaId
         vaga.adicionar_candidatura(self.__candidatoId)
-=======
-        """Associa a candidatura a uma vaga."""
-        self.__vagaId = vaga.vagaId
-        vaga.adicionar_candidatura(self)
->>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
 
     def verificarVagaId(self, vagaId):
         if vagaId > 0:
