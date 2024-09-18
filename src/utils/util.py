@@ -19,10 +19,10 @@ class Util:
     @staticmethod
     def status(x, y):
 
-        date_str = datetime.now().strftime("%d/%m")
-        date_obj = datetime.strptime(date_str, "%d/%m")
-        date_x = datetime.strptime(x, "%d/%m")
-        date_y = datetime.strptime(y, "%d/%m")
+        date_str = datetime.now().strftime("%d/%m/%Y")
+        date_obj = datetime.strptime(date_str, "%d/%m/%Y")
+        date_x = datetime.strptime(x, "%d/%m/%Y")
+        date_y = datetime.strptime(y, "%d/%m/%Y")
 
         if date_x > date_obj:
             return 'Não começado'

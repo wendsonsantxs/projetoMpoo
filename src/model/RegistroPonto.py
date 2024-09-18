@@ -92,10 +92,10 @@ class RegistroPonto:
         
         conn = sqlite3.connect(Env.DATABASE_PONTO)
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS Folha_Ponto (
-                Ponto-id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Funcionario-id INTEGER NOT NULL,
+                Ponto_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Funcionario_id INTEGER NOT NULL,
                 Data iNTEGER NOT NULL,
                 hora_entrada iNTEGER NOT NULL,
                 Saida_descanso iNTEGER NOT NULL,
@@ -103,11 +103,11 @@ class RegistroPonto:
                 Hora_saida iNTEGER NOT NULL,
                 Horas_trabalhadas iNTEGER NOT NULL
             )
-        """)
+        ''')
        
         try:
             cursor.execute('''
-                INSERT INTO Folha_Ponto (Ponto-id, Funcionario-id, Data, Hora_entrada, Saida_descanso, Retorno_descanso, Hora_saida, Horas_trabalhadas)
+                INSERT INTO Folha_Ponto (Ponto_id, Funcionario_id, Data, Hora_entrada, Saida_descanso, Retorno_descanso, Hora_saida, Horas_trabalhadas)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ''', (self.pontoId, self.__funcionarioId, self.__data,  self.__horaEntrada, self.__saidaDescanso, self.__retornoDescanso, self.__horaSaida, self.__horasTrabalhadas))
             conn.commit()

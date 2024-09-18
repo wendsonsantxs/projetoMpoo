@@ -11,7 +11,7 @@ class Vaga:
         self.__requisitos = None
         self.__dataPublicacao = None
         self.__dataSelecao = None
-        self.__status = Util.status(self.__dataPublicacao, self.__dataSelecao)
+        self.__status = None
 
     def get_dados(self, titulo, descricao, requisitos, dataPublicacao, dataSelecao):
         self.titulo = titulo
@@ -19,6 +19,10 @@ class Vaga:
         self.requisitos = requisitos
         self.dataPublicacao = dataPublicacao
         self.dataSelecao = dataSelecao
+
+        status = Util.status(dataPublicacao, dataSelecao)
+        self.status = status 
+        
 
     @property
     def titulo(self):
@@ -60,31 +64,38 @@ class Vaga:
     def dataSelecao(self, dataSelecao):
         self.__dataSelecao = Util.verify_data(dataSelecao)
 
+    @property
+    def status(self):
+        return self.__status
     
+    @status.setter
+    def status(self, status):
+        self.__status = status
     
     def adicionar_vaga(self):
        
+
         conn = sqlite3.connect(Env.DATABASE_VAGAS)
         cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS vagas (
-                Vaga-id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Vagas( 
+                Vaga_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Titulo TEXT NOT NULL,
                 Descrição TEXT NOT NULL,
                 Requisitos TEXT NOT NULL,
-                Data_publicacao TEXT NOT NULL,
+                Data_publicação TEXT NOT NULL,
                 Data_seleção TEXT NOT NULL,
                 Status TEXT NOT NULL
             )
-        """)
+        ''')
 
         try:
             cursor.execute('''
-                INSERT INTO vagas (vaga-id, Titulo, Descrição, Requisitos, Data_publicação, Data_seleção, Status)
+                INSERT INTO Vagas (vaga_id, Titulo, Descrição, Requisitos, Data_publicação, Data_seleção, Status)
                 VALUES (?, ?, ?, ?, ?, ? ,?)
             ''', (self.vagaId, self.__titulo, self.__descricao, self.__requisitos, self.__dataPublicacao, self.__dataSelecao, self.__status))
             conn.commit()
-            conn.close()
+            
             print("Vaga adicionada com sucesso!")
 
         except sqlite3.Error as e:
@@ -109,13 +120,4 @@ class Vaga:
     #     else:
     #         raise ValueError(f"Vaga com ID {vaga_id} não encontrada.")
 
-    # # def gerar_relatorio(self):
-    #         """Gera um relatório com estatísticas sobre a vaga."""
-    #         total_candidaturas = len(self.candidaturas)
-    #         candidaturas_aprovadas = sum(1 for c in self.candidaturas if c.status == 'Aprovado')
-    #         candidaturas_rejeitadas = sum(1 for c in self.candidaturas if c.status == 'Rejeitado')
-    #         return {
-    #             'total_candidaturas': total_candidaturas,
-    #             'aprovadas': candidaturas_aprovadas,
-    #             'rejeitadas': candidaturas_rejeitadas
-    #         }
+    

@@ -12,15 +12,15 @@ class Treinamento:
         self.__dataFim = None
         self.__duracao = None
         self.__participantes = {}
-        self.__status = Util.status(self.dataInicio, self.dataFim)
-
+        self.__status = None
     def get_dados(self, titulo, descricao, dataInicio, dataFim, duracao):
         self.titulo = titulo
         self.descricao = descricao
         self.dataInicio = dataInicio
         self.dataFim = dataFim
         self.duracao = duracao
-        
+        status = Util.status(self.dataInicio, self.dataFim)
+        self.status = status
     @property
     def titulo(self):
         return self.__titulo
@@ -81,9 +81,9 @@ class Treinamento:
        
         conn = sqlite3.connect(Env.DATABASE_TREINAMENTO)
         cursor = conn.cursor()
-        cursor.execute("""
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS Treinamentos (
-                Treinamento-id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Treinamento_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Titulo TEXT NOT NULL,
                 Descrição TEXT NOT NULL,
                 Data_inicio TEXT NOT NULL,
@@ -92,11 +92,11 @@ class Treinamento:
                 Data_fim TEXT NOT NULL,
                 Status TEXT NOT NULL
             )
-        """)
+        ''')
        
         try:
             cursor.execute('''
-                INSERT INTO Treinamentos (Treinamento-id, Titulo, Descrição, Data_inicio, Duração, Data_fim, Status)
+                INSERT INTO Treinamentos (Treinamento_id, Titulo, Descrição, Data_inicio, Duração, Data_fim, Status)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (self.treinamentoId, self.__titulotitulo, self.__descricao, self.__dataInicio, self.__duracao, self.__dataFim, self.__status))
             conn.commit()
@@ -107,7 +107,7 @@ class Treinamento:
             print(f"Erro ao inserir dados: {e}")
 
     # def get_treinamento_by_id(self, treinamento_id):
-    #     """Recupera um treinamento do banco de dados pelo ID."""
+    #     '''Recupera um treinamento do banco de dados pelo ID.'''
     #     with sqlite3.connect('funcionarios.db') as conn:
     #         cursor = conn.cursor()
     #         cursor.execute("SELECT * FROM treinamentos WHERE id=?", (treinamento_id,))

@@ -70,8 +70,8 @@ class CadastroV(Window):
 
         self.entry_image_1 = PhotoImage(file=self.assets("entry5_1.png"))
         self.entry_bg_1 = self.canvas.create_image(    408.5, 398.0, image = self.entry_image_1)
-        self.entry_1 = Text(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0)
-        self.entry_1.place(x=194.0, y=362.0, width=429.0, height=70.0)
+        self.entry_1 = Text(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font= ("IBMPlexSansCond Regular", 17 * -1))
+        self.entry_1.place(x=194.0, y=361.9, width=429.0, height=68.3)
 
         self.scrollbar_1 = Scrollbar(self.root, orient = "vertical", command=self.entry_1.yview)
         self.entry_1.configure(yscrollcommand=self.scrollbar_1.set)
@@ -91,8 +91,8 @@ class CadastroV(Window):
 
         self.entry_image_2 = PhotoImage(file = self.assets("entry5_6.png"))
         self.entry_bg_2 = self.canvas.create_image(408.5, 535.0, image = self.entry_image_2)
-        self.entry_2 = Text(bd = 0, bg = "#FFFFFF", fg = "#000716", highlightthickness = 0)
-        self.entry_2.place(x=194.0, y=488.0, width=429.0, height=92.0)
+        self.entry_2 = Text(bd = 0, bg = "#FFFFFF", fg = "#000716", highlightthickness = 0, font= ("IBMPlexSansCond Regular", 17 * -1))
+        self.entry_2.place(x=194.0, y=488.5, width=429.0, height=90.5)
 
         self.scrollbar_2 = Scrollbar(self.root, orient = "vertical", command=self.entry_2.yview)
         self.entry_2.configure(yscrollcommand=self.scrollbar_2.set)
@@ -214,11 +214,11 @@ class CadastroV(Window):
 
     def register_vacancy(self):
 
-        if self.entry_1.get() and self.entry_2.get() and self.entry_3.get() and self.entry_4.get() and self.entry_5.get():
+        if self.entry_1.get('1.0', 'end-1c') and self.entry_2.get('1.0', 'end-1c') and self.entry_3.get() and self.entry_4.get() and self.entry_5.get():
 
             titulo = self.entry_4.get()
-            requisitos = self.entry_1.get("1.0", "end-1c")
-            descricao = self.entry_2.get("1.0", "end-1c")
+            requisitos = self.entry_1.get('1.0', 'end-1c')
+            descricao = self.entry_2.get('1.0', 'end-1c')
             data_publicacao = self.entry_3.get()
             data_selecao = self.entry_5.get()
 
@@ -243,21 +243,21 @@ class CadastroV(Window):
             if self.mensage_get:
                 self.canvas.delete(self.mensage_get)
             self.mensage_get = self.canvas.create_text(
-                    600.0, 
+                    560.0, 
                     174.0,  
                     anchor="nw", 
-                    text="* Cadastro realizado com sucesso", 
+                    text="*Sucesso ao cadastrar", 
                     fill="#008c00",
-                    font=("Itim Regular", 18 * -1)
+                    font=("Itim Regular", 16 * -1)
                     )
 
         else:
             if not self.mensage_get:
                 self.mensage_get = self.canvas.create_text(
-                        600.0, 
+                        560.0, 
                         176.0,  
                         anchor="nw", 
                         text="Preencha todos os campos (*)", 
                         fill="#FF0000",
-                        font=("Itim regular", 18 * -1)
+                        font=("Itim regular", 16 * -1)
                         )

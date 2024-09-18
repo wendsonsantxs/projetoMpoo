@@ -26,7 +26,7 @@ class Candidatura:
         return self.__nome
     
     @nome.setter
-    def nomenome(self, nome):
+    def nome(self, nome):
         self.__nome = nome
 
     @property
@@ -43,8 +43,8 @@ class Candidatura:
     
     @vagaId.setter
     def vagaId(self, vagaId):
-        verify = Util.verify_existence(Env.DATABASE_VAGAS, 'Vagas', 'vagaId', vagaId)
-        if verify:
+        verify = Util.verify_existence(Env.DATABASE_VAGAS, 'Vagas', 'Vaga_id', vagaId)
+        if verify == False:
             raise ValueError('Vaga não existe')
         else:
             self.__vagaId = vagaId
@@ -79,19 +79,19 @@ class Candidatura:
         cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS Candidatos( 
-                Candidato-Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Candidato_Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Nome TEXT NOT NULL,
                 CPF TEXT NOT NULL,
                 Telefone TEXT NOT NULL,
                 Qualidades TEXT NOT NULL,
                 Observações TEXT NOT NULL,
-                Vaga-Id TEXT NOT NULL,
+                Vaga_id TEXT NOT NULL
             )
         ''')
 
         try:
             cursor.execute('''
-                INSERT INTO funcionarios (Candidato-Id, Nome, CPF, Telefone, Qualidade, Observações, Vaga-Id)
+                INSERT INTO Candidatos (Candidato_Id, Nome, CPF, Telefone, Qualidades, Observações, Vaga_id)
                 VALUES (?,?,?,?,?,?,?)
             ''',(self._candidatoId, self.__nome, self.__cpf, self.__telefone, self.__qualidades, self.__observacoes, self.__vagaId))
             
@@ -107,24 +107,24 @@ class Candidatura:
     def remover_candidato(self):
         pass
 
-    def get_entrevistas_agendadas(self):
-        """Recupera entrevistas agendadas do banco de dados e atualiza a lista local."""
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
+    # def get_entrevistas_agendadas(self):
+    #     """Recupera entrevistas agendadas do banco de dados e atualiza a lista local."""
+    #     conn = sqlite3.connect('funcionarios.db')
+    #     cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM entrevistas WHERE candidatura_id=?", (self.id,))
-        rows = cursor.fetchall()
+    #     cursor.execute("SELECT * FROM entrevistas WHERE candidatura_id=?", (self.id,))
+    #     rows = cursor.fetchall()
 
-        conn.close()
+    #     conn.close()
 
-        entrevistas = []
-        for row in rows:
-            entrevista = {
-                'data': row[2],  # Supondo que a coluna 2 seja a data
-                'horario': row[3],  # Supondo que a coluna 3 seja o horário
-                'entrevistador': row[4]  # Supondo que a coluna 4 seja o entrevistador
-            }
-            entrevistas.append(entrevista)
+    #     entrevistas = []
+    #     for row in rows:
+    #         entrevista = {
+    #             'data': row[2],  # Supondo que a coluna 2 seja a data
+    #             'horario': row[3],  # Supondo que a coluna 3 seja o horário
+    #             'entrevistador': row[4]  # Supondo que a coluna 4 seja o entrevistador
+    #         }
+    #         entrevistas.append(entrevista)
 
-        self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
-        return entrevistas
+    #     self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
+    #     return entrevistas
