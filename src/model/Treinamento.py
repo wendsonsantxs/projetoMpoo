@@ -13,7 +13,8 @@ class Treinamento:
         self.__duracao = None
         self.__participantes = {}
         self.__status = None
-    def get_dados(self, titulo, descricao, dataInicio, dataFim, duracao):
+
+    def get_dados(self, titulo, descricao, dataInicio, dataFim, duracao, participantes):
         self.titulo = titulo
         self.descricao = descricao
         self.dataInicio = dataInicio
@@ -21,6 +22,8 @@ class Treinamento:
         self.duracao = duracao
         status = Util.status(self.dataInicio, self.dataFim)
         self.status = status
+        self.participantes = participantes
+
     @property
     def titulo(self):
         return self.__titulo
@@ -75,7 +78,22 @@ class Treinamento:
     
     @participantes.setter
     def participantes(self, participantes):
-        self.__participantes = participantes
+        for i in participantes:
+            
+            conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT 1 FROM funcionarios WHERE funcionarioId = ?", i) #verificar se o funcionario existe
+            resultado = cursor.fetchone()
+
+            if resultado:
+                cursor.execute("SELECT * FROM funcionarios LIMIT 1 OFFSET 1")
+                nome = cursor.fetchone()
+                self.__participantes[i] = nome
+            else:
+                print("Funcionário não encontrado")
+
+            
 
     def inserir_treinamento(self):
        
@@ -106,20 +124,28 @@ class Treinamento:
         except sqlite3.Error as e:
             print(f"Erro ao inserir dados: {e}")
 
-    # def get_treinamento_by_id(self, treinamento_id):
-    #     '''Recupera um treinamento do banco de dados pelo ID.'''
-    #     with sqlite3.connect('funcionarios.db') as conn:
-    #         cursor = conn.cursor()
-    #         cursor.execute("SELECT * FROM treinamentos WHERE id=?", (treinamento_id,))
-    #         row = cursor.fetchone()
+    def remover_participante(self, funcionario_id):
+        
+        if funcionario_id in self.participantes:
+            self.participantes.remove(funcionario_id)
+            with sqlite3.connect(Env.DATABASE_TREINAMENTOS) as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM participantes WHERE treinamento_id=? AND funcionario_id=?",
+                        (self.treinamentoId, funcionario_id))
+            conn.commit()
+            conn.close()
+        else:
+            raise ValueError('Funcionário não encontrado no treinamento.')
 
-    #     if row:
-    #         return self(
-    #             titulo = row[1],
-    #             descricao=row[2],
-    #             data_inicio=row[3],
-    #             data_fim=row[4],
-    #             status=row[5]
-    #         )
-    #     else:
-    #         raise ValueError(f"Treinamento com ID {treinamento_id} não encontrado.")
+    def inserir_participantes(self, funcionario_id):
+        """Adiciona um funcionário ao treinamento."""
+        if funcionario_id not in self.participantes:
+            self.participantes.append(funcionario_id)
+            with sqlite3.connect(Env.DATABASE_TREINAMENTOS) as conn:
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO participantes (treinamento_id, funcionario_id) VALUES (?, ?)",
+                        (self.treinamentoId, funcionario_id))
+            conn.commit()
+            conn.close()
+        else:
+            raise ValueError('Funcionário já está no treinamento.')

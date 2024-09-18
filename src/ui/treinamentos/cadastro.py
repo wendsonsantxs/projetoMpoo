@@ -9,9 +9,12 @@ from tkinter import Scrollbar
 from ui.window import Window
 from ui.window_state import WindowState
 
+import re
+
 class CadastroT(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
+        self.mensage_get = None
 
     def create(self):
         super().create() 
@@ -222,12 +225,65 @@ class CadastroT(Window):
             self.entry.insert(0, self.entry_placeholder)
             self.entry.config(fg="#000716")
 
+    def get_numbers(widget):
+    # Obter o texto do widget
+        text = widget.get("1.0", "end-1c")
+        
+        # Encontrar todos os números na string
+        numbers = re.findall(r'\d+', text)
+        
+        # Converter os números encontrados em inteiros e adicionar a uma lista
+        numbers_list = list(map(int, numbers))
+        
+        return numbers_list
 
     def register_coaching(self):
-        nome = self.entry_5.get()
-        descricao = self.entry_2.get("1.0", "end-1c")
-        participantes = self.entry_3.get("1.0", "end-1c")
-        data_inicio = self.entry_4.get()
-        data_fim = self.entry_1.get()
-        duracao = self.entry_6.get()
-        
+
+        if self.entry_1.get() and self.entry_2.get("1.0", "end-1c") and self.entry_3.get("1.0", "end-1c") and self.entry_4.get() and self.entry_5.get() and self.entry_6.get():
+            titulo = self.entry_5.get()
+            descricao = self.entry_2.get("1.0", "end-1c")
+            participantes = self.get_number(self.entry_3)
+            data_inicio = self.entry_4.get()
+            data_fim = self.entry_1.get()
+            duracao = self.entry_6.get()
+
+            try:
+                treinamento = treinamento()
+                treinamento.get_dados(titulo, descricao, data_inicio, data_fim, duracao, participantes)
+                treinamento.adicionar_candidato()
+
+            except ValueError as e:
+                if self.mensage_get:
+                    self.canvas.delete(self.mensage_get)
+                self.mensage_get = self.canvas.create_text(
+                    600.0, 
+                    174.0,  
+                    anchor="nw", 
+                    text=f"* {e}", 
+                    fill="#FF0000",
+                    font=("Itim Regular", 18 * -1)
+                    )
+                return
+
+            if self.mensage_get:
+                self.canvas.delete(self.mensage_get)
+            self.mensage_get = self.canvas.create_text(
+                560.0, 
+                174.0,  
+                anchor="nw", 
+                text="*Sucesso ao cadastrar", 
+                fill="#008c00",
+                font=("Itim Regular", 16 * -1)
+            )
+
+        else:
+            if not self.mensage_get:
+                self.mensage_get = self.canvas.create_text(
+                        560.0, 
+                        176.0,  
+                        anchor="nw", 
+                        text="Preencha todos os campos (*)", 
+                        fill="#FF0000",
+                        font=("Itim regular", 16 * -1)
+                )
+

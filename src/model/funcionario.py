@@ -1,5 +1,8 @@
 from utils.util import Util
 from utils.env import Env
+from model.Treinamento import Treinamento
+from model.RegistroPonto import RegistroPonto
+from model.FolhaPagamento import FolhaPagamento
 
 import sqlite3
 import re
@@ -238,8 +241,59 @@ class Funcionario():
         else:
             raise ValueError("Funcionário não encontrado")
 
-    # def adicionar_avaliacao(self, data_avaliacao, feedback):
-    #     """Adiciona uma avaliação de desempenho ao funcionário."""
-    #     avaliacao = AvaliacaoDesempenho(self.id, data_avaliacao, feedback)
-    #     self.avaliacoes.append(avaliacao)
-    
+    def folhaPagamento(self, dataPagamento, salarioBase, bonus, deducoes):
+        if not self.verificarExistenciaId(self.funcionarioId):
+            raise ValueError('Funcionário não encontrado')
+        else:
+            folhaPagamento = FolhaPagamento(self.funcionarioId, dataPagamento, salarioBase, bonus, deducoes)
+            folhaPagamento.calcular_salario_liquido()
+            folhaPagamento.adicionar_folha_pagamento_bd()
+
+
+    def regstroPonto(self):
+        if not self.verificarExistenciaId(self.funcionarioId):
+            raise ValueError('Funcionário não encontrado')
+        else:
+            ponto = RegistroPonto(self.funcionarioId)
+            ponto.registrar_entrada()
+            ponto.registrar_saida()
+            ponto.calcular_horas_trabalhadas()
+            ponto.adicionarPontoBd()
+
+
+    def treinar(self,titulo, descricao, participantes, data_inicio, data_fim, duracao):
+        if not self.verificarExistenciaId(self.funcionarioId):
+            raise ValueError('Funcionário não encontrado')
+        else:
+            treinamento = Treinamento(titulo, descricao, participantes, data_inicio, data_fim, duracao)
+            treinamento.adicionar_participante(self.funcionarioId)  
+
+    def delete_funcionario(self, id):
+        conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM funcionarios WHERE funcionarioId=?", (id,))
+        conn.commit()
+        conn.close()
+
+        #apaga os registros de ponto
+        connPonto = sqlite3.connect(Env.DATABASE_PONTO)
+        cursorPonto = connPonto.cursor()
+        cursorPonto.execute("DELETE FROM pontos WHERE funcionario_id=?", (id,))
+        connPonto.commit()
+        connPonto.close()
+
+        #apaga os registros de folha de pagamento
+        connFolha = sqlite3.connect(Env.DATABASE_PAGAMENTO)
+        cursorFolha = connFolha.cursor()
+        cursorFolha.execute("DELETE FROM folha_pagamento WHERE funcionario_id=?", (id,))
+        connFolha.commit()
+        connFolha.close()
+
+        #apaga os registros de treinamento
+        connTreinamento = sqlite3.connect(Env.DATABASE_TREINAMENTOS)
+        cursorTreinamento = connTreinamento.cursor()
+        cursorTreinamento.execute("DELETE FROM treinamentos WHERE funcionario_id=?", (id,))
+        connTreinamento.commit()
+        connTreinamento.close()
+
+        print("Funcionário deletado com sucesso!")

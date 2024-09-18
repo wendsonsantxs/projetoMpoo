@@ -74,7 +74,6 @@ class Vaga:
     
     def adicionar_vaga(self):
        
-
         conn = sqlite3.connect(Env.DATABASE_VAGAS)
         cursor = conn.cursor()
         cursor.execute('''
