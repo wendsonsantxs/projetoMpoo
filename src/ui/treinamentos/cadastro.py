@@ -1,8 +1,11 @@
+import sqlite3
 from tkinter import Button
 from tkinter import Canvas
 from tkinter import PhotoImage
 from tkinter import Tk
 from tkinter import Entry
+from model.Treinamento import Treinamento
+from model.funcionario import Funcionario
 
 from ui.window import Window
 from ui.window_state import WindowState
@@ -10,6 +13,7 @@ from ui.window_state import WindowState
 class CadastroT(Window):
     def __init__(self, root = Tk):
         super().__init__(root)
+        self.mensage_get = None
 
     def create(self):
         super().create() 
@@ -166,10 +170,49 @@ class CadastroT(Window):
         self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_T))
 
     def register_coaching(self):
-        nome = self.entry_5.get()
-        descricao = self.entry_2.get()
-        participantes = self.entry_3.get()
-        data_inicio = self.entry_4.get()
-        data_fim = self.entry_1.get()
-        duracao = self.entry_6.get()
+        if self.entry_5.get() == "" or self.entry_2.get() == "" or self.entry_3.get() == "" or self.entry_4.get() == "" or self.entry_1.get() == "" or self.entry_6.get() == "":
+            titulo = self.entry_5.get()
+            descricao = self.entry_2.get()
+            participantes = self.entry_3.get()
+            data_inicio = self.entry_4.get()
+            data_fim = self.entry_1.get()
+            duracao = self.entry_6.get()
+            try:
+                funcionario = Funcionario.get_funcionario_by_id(participantes)
+                funcionario.treinar(titulo, descricao, participantes, data_inicio, data_fim, duracao)
+                
+
+            except ValueError as e:
+                if self.mensage_get:
+                    self.canvas.delete(self.mensage_get)
+                self.mensage_get = self.canvas.create_text(
+                    600.0, 
+                    174.0,  
+                    anchor="nw", 
+                    text=f"* {e}", 
+                    fill="#FF0000",
+                    font=("Itim Regular", 18 * -1)
+                    )
+                return
+
+            if self.mensage_get:
+                self.canvas.delete(self.mensage_get)
+                self.mensage_get = self.canvas.create_text(
+                        600.0, 
+                        174.0,  
+                        anchor="nw", 
+                        text="* Cadastro realizado com sucesso", 
+                        fill="#008c00",
+                        font=("Itim Regular", 18 * -1)
+                        )
+        else:
+            if not self.mensage_get:
+                self.mensage_get = self.canvas.create_text(
+                        600.0, 
+                        176.0,  
+                        anchor="nw", 
+                        text="Preencha todos os campos (*)", 
+                        fill="#FF0000",
+                        font=("Itim regular", 18 * -1)
+                        )
         

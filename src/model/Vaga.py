@@ -87,7 +87,7 @@ class Vaga:
     @classmethod
     def get_vaga_by_id(cls, vaga_id):
         """Recupera uma vaga do banco de dados pelo ID."""
-        with sqlite3.connect('funcionarios.db') as conn:
+        with sqlite3.connect(Env.DATABASE_VAGAS) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM vagas WHERE id=?", (vaga_id,))
             row = cursor.fetchone()

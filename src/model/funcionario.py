@@ -1,9 +1,9 @@
 from utils.util import Util
 from utils.env import Env
-#from Treinamento import Treinamento
 import sqlite3
 import re
 import requests
+from model.Treinamento import Treinamento
 
 class Funcionario():
     def __init__(self,nome, email, cpf, telefone, endereco, numero, bairro, 
@@ -25,10 +25,9 @@ class Funcionario():
         self.cidade= cidade
 
 
-    # def treinar(self, treinamento_id):
-    #     """Adiciona um funcionário ao treinamento."""
-    #     treinamento = Treinamento.get_treinamento_by_id(treinamento_id)
-    #     treinamento.adicionar_participante(self.funcionarioId)  
+    def treinar(self,titulo, descricao, participantes, data_inicio, data_fim, duracao):
+        treinamento = Treinamento(titulo, descricao, participantes, data_inicio, data_fim, duracao)
+        treinamento.adicionar_participante(self.funcionarioId)  
 
     def adicionar_funcionario(self):
         conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
