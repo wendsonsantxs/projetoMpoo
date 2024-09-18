@@ -1,5 +1,6 @@
 import re
 import sqlite3
+from utils.env import Env
 from utils.util import Util
 
 class FolhaPagamento:
@@ -9,10 +10,43 @@ class FolhaPagamento:
         self.dataPagamento= self.verificaData(dataPagamento)
         self.bonus= bonus
         self.deducoes= deducoes
-        self.__salarioBase= salarioBase
+        self.__salarioBase= self.verificarSalario(salarioBase)
         self.__salarioLiquido = self.calcular_salario()
 
-  
+
+    def adicionarFolhaPagamentoBd(self):
+        conn= sqlite3.connect(Env.DATABASE_PAGAMENTO)
+        cursor= conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS folha_pagamento (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                pagamento_id TEXT NOT NULL,
+                funcionario_id TEXT NOT NULL,
+                data_pagamento TEXT NOT NULL,
+                salario_base TEXT NOT NULL,
+                bonus TEXT NOT NULL,
+                deducoes TEXT NOT NULL,
+                salario_liquido TEXT NOT NULL
+                       
+            )
+        """)
+        try:
+            cursor.execute('''
+                INSERT INTO folha_pagamento (pagamento_id, funcionario_id, data_pagamento, salario_base, bonus, deducoes, salario_liquido)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (self.pagamentoId, self.funcionarioId, self.dataPagamento, self.salarioBase, self.bonus, self.deducoes, self.salarioLiquido))
+            conn.commit()
+            conn.close()
+            print("Folha de pagamento adicionada com sucesso!")
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir dados: {e}")
+
+
+    def verificarSalario(self, salarioBase):
+        if salarioBase > 0:
+            return salarioBase
+        else:
+            raise ValueError("Salário inválido")
     
     def calcularHoraExtra(self):
         valorhora=self.salarioBase/220
@@ -38,7 +72,10 @@ class FolhaPagamento:
             return False
         
     def verificarFuncionario(self):
-        ...
+        if self.funcionarioId > 0:
+            return True
+        else:
+            return False
         
 
     def verificarSalario(self):

@@ -1,4 +1,6 @@
 from utils.util import Util
+from utils.env import Env
+
 
 class AvaliacaoDesempenho:
     def __init__(self, funcionarioId, dataAvalicao, feedback):
@@ -54,7 +56,7 @@ class AvaliacaoDesempenho:
     @classmethod
     def get_avaliacao_by_id(cls, avaliacao_id):
         """Busca uma avaliação de desempenho no banco de dados pelo ID."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect(Env.DATABASE_AVALIACOES)
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM avaliacao WHERE id=?", (avaliacao_id,))
@@ -75,7 +77,7 @@ class AvaliacaoDesempenho:
 
     def salvar_avaliacao(self):
         """Salva a avaliação de desempenho no banco de dados."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect(Env.DATABASE_AVALIACOES)
         cursor = conn.cursor()
 
         cursor.execute("""
@@ -88,7 +90,7 @@ class AvaliacaoDesempenho:
 
     def atualizar_avaliacao(self):
         """Atualiza uma avaliação de desempenho existente no banco de dados."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect(Env.DATABASE_AVALIACOES)
         cursor = conn.cursor()
 
         cursor.execute("""

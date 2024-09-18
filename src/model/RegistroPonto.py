@@ -1,21 +1,23 @@
+import sqlite3
+from utils.env import Env
 from utils.util import Util
 from datetime import datetime 
 
 class RegistroPonto:
-    def __init__(self, funcionarioId, data, horaEntrada, horaSaida, horasTrabalhadas):
+    def __init__(self, funcionarioId, data):
         self.__pontoId= Util.gerador_id(6, 839)
         self.__funcionarioId= self.verificar_funcionario(funcionarioId)
         self.data= data
-        self.__horaEntrada= horaEntrada
-        self.__horaSaida= horaSaida
-        self.__horasTrabalhadas= horasTrabalhadas
+        self.__horaEntrada= self.hora_entrada()
+        self.__horaSaida= self.hora_saida()
+        self.__horasTrabalhadas= self.calcular_horas_trabalhadas()
  
 
     def registrar_entrada(self):
-        self.entrada = datetime.now()
+        return datetime.now()
 
     def registrar_saida(self):
-        self.saida = datetime.now()
+        return datetime.now()
 
     def calcular_horas_trabalhadas(self):
         if self.entrada and self.saida:
@@ -26,7 +28,31 @@ class RegistroPonto:
             return True
         else:
             return False
-        
+    
+    def adicionarPontoBd(self):
+        conn= sqlite3.connect(Env.DATABASE_PONTO)
+        cursor= conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS pontos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ponto_id TEXT NOT NULL,
+                funcionario_id TEXT NOT NULL,
+                data TEXT NOT NULL,
+                hora_entrada TEXT NOT NULL,
+                hora_saida TEXT NOT NULL,
+                horas_trabalhadas TEXT NOT NULL
+            )
+        """)
+        try:
+            cursor.execute('''
+                INSERT INTO pontos (ponto_id, funcionario_id, data, hora_entrada, hora_saida, horas_trabalhadas)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (self.pontoId, self.funcionarioId, self.data, self.horaEntrada, self.horaSaida, self.horasTrabalhadas))
+            conn.commit()
+            conn.close()
+            print("Ponto adicionado com sucesso!")
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir dados: {e}")
 
     def verificarHoraEntrada(self):
         if self.horaEntrada:
