@@ -90,10 +90,14 @@ class Vaga:
     def get_vaga_by_id(cls, vaga_id):
         """Recupera uma vaga do banco de dados pelo ID."""
 <<<<<<< HEAD
+<<<<<<< HEAD
         with sqlite3.connect(Env.DATABASE_VAGAS) as conn:
 =======
         with sqlite3.connect('vagas.db') as conn:
 >>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
+=======
+        with sqlite3.connect(Env.DATABASE_VAGAS) as conn:
+>>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM vagas WHERE id=?", (vaga_id,))
             row = cursor.fetchone()

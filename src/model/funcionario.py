@@ -1,5 +1,6 @@
 from utils.util import Util
 from utils.env import Env
+<<<<<<< HEAD
 from model.FolhaPagamento import FolhaPagamento
 <<<<<<< HEAD
 from model.Treinamento import *
@@ -8,9 +9,12 @@ from model.AvalicaoDesemprenho import *
 =======
 #from Treinamento import Treinamento
 >>>>>>> 7490e556e611fc6c72df7c012cd206d22f5d97e4
+=======
+>>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
 import sqlite3
 import re
 import requests
+from model.Treinamento import Treinamento
 
 class Funcionario:
     def __init__(self, nome, email, cpf, telefone, endereco, numero, bairro, cidade, cep, cargo, departamento, salario, contratacao, data_nascimento):
@@ -102,6 +106,12 @@ class Funcionario:
         else:
             raise ValueError('Nome já cadastrado anteriormente')
 
+<<<<<<< HEAD
+=======
+    def treinar(self,titulo, descricao, participantes, data_inicio, data_fim, duracao):
+        treinamento = Treinamento(titulo, descricao, participantes, data_inicio, data_fim, duracao)
+        treinamento.adicionar_participante(self.funcionarioId)  
+>>>>>>> f918f67d18b6eeb713fa5836cbe5b14d5d3e4e0b
 
     def adicionar_funcionario(self):
         conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
