@@ -71,12 +71,12 @@ class FolhaPagamento:
         else:
             return False
         
-    def verificarFuncionario(self):
-        if self.funcionarioId > 0:
+    def verificarFuncionario(self, funcionarioId):
+        if funcionarioId > 0:
             return True
         else:
             return False
-        
+    
 
     def verificarSalario(self):
         if self.salarioBase > 0:
@@ -92,7 +92,7 @@ class FolhaPagamento:
     @pagamentoId.setter
     def pagamentoId(self, novoId):
         self.__pagamentoId = novoId
-
+    @property
     def funcionarioId(self):
         return self.__funcionarioId
     
@@ -128,9 +128,15 @@ class FolhaPagamento:
     # def deducoes(self):
     #     return self.__deducoes
     
-    @salarioLiquido.setter
-    def salarioLiquido(self, novoSalario):
-        self.__salarioLiquido = novoSalario
+    @funcionarioId.setter
+    def funcionarioId(self, novoId):
+        self.__funcionarioId = novoId
+
+    @property
+    def deducoes(self):
+        return self.__deducoes
+    
+
 
     @property   
     def salarioLiquido(self):
