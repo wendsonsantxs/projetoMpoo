@@ -5,17 +5,17 @@ from tkinter import Tk
 
 from ui.window import Window
 from ui.window_state import WindowState
-from ui.treinamentos.ativos import TreinamentoAt
+from ui.treinamentos.pesquisar.window import PesquisarWindow
 from ui.treinamentos.cadastro import CadastroT
-from ui.treinamentos.historico import HistoricoT
+from ui.treinamentos.remover import RemoverT
 
 
 class TreinamentosWindow(Window):
     def __init__(self, root: Tk):
         super().__init__(root=root)
-        WindowState.set_window(WindowState.ID_TREINAMENTO_ATIVO, TreinamentoAt(root=self.root))
+        WindowState.set_window(WindowState.ID_PESQUISAR_T, PesquisarWindow(root=self.root))
         WindowState.set_window(WindowState.ID_CADASTRO_T, CadastroT(root=self.root))
-        WindowState.set_window(WindowState.ID_TREINAMENTO_HISTORICO, HistoricoT(root=self.root))
+        WindowState.set_window(WindowState.ID_REMOVER_T, RemoverT(root=self.root))
 
     def create(self):
         super().create()
@@ -83,19 +83,19 @@ class TreinamentosWindow(Window):
         )
 
         self.canvas.create_text(
-            200.0,
+            190.0,
             474.0,
             anchor="nw",
-            text="Treinamentos Ativos",
+            text="Remover Treinamento",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
 
         self.canvas.create_text(
-            165.0,
+            170.0,
             629.0,
             anchor="nw",
-            text="Histórico de Treinamento",
+            text="Pesquisar Treinamento",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
@@ -136,10 +136,10 @@ class TreinamentosWindow(Window):
         self.switch_window(WindowState.get_window(WindowState.ID_CADASTRO_T))
 
     def relacaoT_button02(self):
-       self.switch_window(WindowState.get_window(WindowState.ID_TREINAMENTO_ATIVO))
+       self.switch_window(WindowState.get_window(WindowState.ID_REMOVER_T))
 
     def relacaoT_button03(self):
-        self.switch_window(WindowState.get_window(WindowState.ID_TREINAMENTO_HISTORICO))
+        self.switch_window(WindowState.get_window(WindowState.ID_PESQUISAR_T))
 
     def button_back(self):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_MAIN))

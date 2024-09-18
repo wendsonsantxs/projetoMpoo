@@ -1,53 +1,109 @@
-import re
-import sqlite3
-from utils.env import Env
 from utils.util import Util
+from utils.env import Env
+
+import sqlite3
 
 class FolhaPagamento:
-    def __init__(self, funcionarioId, dataPagamento, salarioBase, bonus, deducoes):
-        self.__pagamentoId= Util.gerador_id(6, 19)
-        self.__funcionarioId= self.verificarFuncionario(funcionarioId)
-        self.dataPagamento= self.verificaData(dataPagamento)
-        self.bonus= bonus
-        self.deducoes= deducoes
-        self.__salarioBase= self.verificarSalario(salarioBase)
+    def __init__(self):
+        self._pagamentoId= Util.gerador_id(6, 19)
+        self.__funcionarioId = None
+        self.__dataPagamento = None
+        self.__bonus = None
+        self.__deducoes = None
+        self.__salarioBase = None
+        self.__deducoes = None
+        self.__salarioLiquido = None
+
+    def get_dados(self, funcionarioId, dataPagamento, bonus, deducoes, salarioBase): #salarioLiquido
+        self.funcionarioId = funcionarioId
+        self.dataPagamento = dataPagamento
+        self.bonus = bonus
+        self.deducoes = deducoes
+        self.salarioBase = salarioBase
+        self.deducoes = self.calcularHoraExtra()
+
+    @property
+    def funcionarioId(self):
+        return self.__funcionarioId
+    
+    @funcionarioId.setter
+    def funcionarioId(self, funcionarioId):
+        verify = Util.verify_existence(Env.DATABASE_FUNCIONARIO, 'funcionario', 'funcionarioId', funcionarioId)
+        if verify:
+            raise ValueError('Funcionário não existe')
+        else:
+            self.__funcionarioId = funcionarioId
+
+    @property
+    def dataPagamento(self):
+        return self.__dataPagamento
+    
+    @dataPagamento.setter
+    def dataPagamento(self, dataPagamento):
+        self.__dataPagamento = Util.verify_data(dataPagamento)
+
+    @property
+    def bonus(self):
+        return self.__bonus
+    
+    @bonus.setter
+    def bonus(self, bonus):
+        self.__bonus = bonus
+
+    @property
+    def deducoes(self):
+        return self.__deducoes
+    
+    @deducoes.setter
+    def deducoes(self, deducoes):
+        self.__deducoes = deducoes
+
+    @property
+    def salarioBase(self):
+        return self.__salarioBase
+    
+    @salarioBase.setter
+    def salarioBase(self, salarioBase):
+        self.__salarioBase = salarioBase
+
+    @property
+    def salarioLiquido(self):
+        return self.__salarioLiquido
+    
+    @salarioLiquido.setter
+    def salarioLiquido(self):
         self.__salarioLiquido = self.calcular_salario()
 
 
-    def adicionarFolhaPagamentoBd(self):
-        conn= sqlite3.connect(Env.DATABASE_PAGAMENTO)
-        cursor= conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS folha_pagamento (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                pagamento_id TEXT NOT NULL,
-                funcionario_id TEXT NOT NULL,
-                data_pagamento TEXT NOT NULL,
-                salario_base TEXT NOT NULL,
-                bonus TEXT NOT NULL,
-                deducoes TEXT NOT NULL,
-                salario_liquido TEXT NOT NULL
-                       
+    def adicionar_folha_pagamento(self):
+        conn = sqlite3.connect(Env.DATABASE_PAGAMENTO)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Folha_Pagamento( 
+                Pagamento-Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Funcionario-Id TEXT NOT NULL,
+                Data_Pagamento TEXT NOT NULL,
+                salario_Base TEXT NOT NULL,
+                Bonus TEXT NOT NULL,
+                Deduções TEXT NOT NULL,
+                Salario_Liquido TEXT NOT NULL
             )
-        """)
+        ''')
         try:
             cursor.execute('''
-                INSERT INTO folha_pagamento (pagamento_id, funcionario_id, data_pagamento, salario_base, bonus, deducoes, salario_liquido)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (self.pagamentoId, self.funcionarioId, self.dataPagamento, self.salarioBase, self.bonus, self.deducoes, self.salarioLiquido))
+                INSERT INTO funcionarios (Pagamento-Id, Funcionario-Id, Data_Pagamento, salario_Base, Bonus, Deduções, Salario_Liquido)
+                VALUES (?,?,?,?,?,?,?)
+            ''',(self._pagamentoId, self.__funcionarioId, self.__dataPagamento, self.__salarioBase, self.__bonus, self.__deducoes, self.__salarioLiquido))
+            
             conn.commit()
             conn.close()
-            print("Folha de pagamento adicionada com sucesso!")
+
+            print("Candidato adicionado com sucesso!")
+
         except sqlite3.Error as e:
             print(f"Erro ao inserir dados: {e}")
 
-
-    def verificarSalario(self, salarioBase):
-        if salarioBase > 0:
-            return salarioBase
-        else:
-            raise ValueError("Salário inválido")
-    
     def calcularHoraExtra(self):
         valorhora=self.salarioBase/220
 
@@ -60,92 +116,11 @@ class FolhaPagamento:
         salarioLiquido = self.salarioBase + self.bonus - self.deducoes
         return salarioLiquido  
     
-    def verificaData(self, data):
-        if not re.match(r'^\d{2}\/\d{2}\/\d{4}$', data):
-            raise ValueError('Data inválida')
-        return data
-    
-    def verificarPagamento(self):
-        if self.salarioLiquido > 0:
-            return True
-        else:
-            return False
-        
-    def verificarFuncionario(self, funcionarioId):
-        if funcionarioId > 0:
-            return True
-        else:
-            return False
-    
 
-    def verificarSalario(self):
-        if self.salarioBase > 0:
-            return True
-        else:
-            return False
-
-
-    @property
-    def pagamentoId(self):
-        return self.__pagamentoId
-    
-    @pagamentoId.setter
-    def pagamentoId(self, novoId):
-        self.__pagamentoId = novoId
-    @property
-    def funcionarioId(self):
-        return self.__funcionarioId
-    
-    @funcionarioId.setter
-    def funcionarioId(self, novoId):
-        self.__funcionarioId = novoId
-
-    @property
-    def bonus(self):
-       return self.__bonus
-    
-    @property
-    def dataPagamento(self):
-        return self.__dataPagamento
-    
-    @dataPagamento.setter
-    def dataPagamentoi(self, novaData):
-        self.__dataPagamento = novaData
-
-    @property
-    def titulo(self):
-        return self.__titulo
-    
-    @property
-    def salarioBase(self):
-        return self.__salarioBase
-    
-    @salarioBase.setter
-    def salarioBase(self, novoSalario):
-        self.__salarioBase = novoSalario
-    
-    # @property
-    # def deducoes(self):
-    #     return self.__deducoes
-    
-    @funcionarioId.setter
-    def funcionarioId(self, novoId):
-        self.__funcionarioId = novoId
-
-    @property
-    def deducoes(self):
-        return self.__deducoes
-    
-
-
-    @property   
-    def salarioLiquido(self):
-        return self.__salarioLiquido
-    
     @classmethod
     def get_folha_pagamento_by_id(cls, folha_pagamento_id):
         """Recupera uma folha de pagamento do banco de dados pelo ID."""
-        conn = sqlite3.connect('funcionarios.db')
+        conn = sqlite3.connect(Env.DATABASE_PAGAMENTO)
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM folha_pagamento WHERE id=?", (folha_pagamento_id,))

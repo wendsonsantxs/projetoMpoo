@@ -4,127 +4,127 @@ from utils.env import Env
 import sqlite3
 
 class Candidatura:
-    def __init__(self, vagaId, candidatoNome):
-        self.__candidatoId= Util.gerador_id(6, 74)
-        self.__vagaId= self.verificarVagaId(vagaId)
-        self.candidatoNome= candidatoNome
-        self.status= Util.status()
-     
+    def __init__(self):
+        self._candidatoId = Util.gerador_id(6, 24)
+        self.__vagaId = None
+        self.__nome = None
+        self.__cpf = None
+        self.__telefone = None
+        self.__qualidades = None
+        self.__observacoes = None
 
-
-    
-
-    def verificarVagaId(self):
-        if self.vagaId > 0:
-            return True
-        else:
-            return False
+    def get_dados(self, nome, cpf, telefone, vaga, qualidades, observacoes):
+        self.nome = nome
+        self.vagaId = vaga
+        self.cpf = cpf
+        self.telefone = telefone
+        self.qualidades = qualidades
+        self.observacoes = observacoes
         
     @property
-    def candidatoId(self):
-        return self.__candidatoId
-    @candidatoId.setter
-    def candidatoId(self, novoId):
-        self.__candidatoId = novoId
+    def nome(self):
+        return self.__nome
+    
+    @nome.setter
+    def nome(self, nome):
+        self.__nome = nome
+
+    @property
+    def cpf(self):
+        return self.__cpf
+    
+    @cpf.setter
+    def cpf(self, cpf):
+        self.__cpf = Util.verify_cpf(cpf)
 
     @property
     def vagaId(self):
         return self.__vagaId
-    @vagaId.setter
-    def vagaId(self, novoId):
-        self.__vagaId = novoId
-
-    @property
-    def candidatoNome(self):
-        return self.__candidatoNome
-    @candidatoNome.setter
-    def candidatoNome(self, novoNome):
-        self.__candidatoNome = novoNome
-
-    @property
-    def status(self):
-        return self.__status
     
+    @vagaId.setter
+    def vagaId(self, vagaId):
+        verify = Util.verify_existence(Env.DATABASE_VAGAS, 'Vagas', 'Vaga_id', vagaId)
+        if verify == False:
+            raise ValueError('Vaga não existe')
+        else:
+            self.__vagaId = vagaId
+
+    @property
+    def telefone(self):
+        return self.__telefone
+    
+    @telefone.setter
+    def telefone(self, telefone):
+        self.__telefone = Util.verify_telefone(telefone)
+
+    @property
+    def qualidades(self):
+        return self.__qualidades
+    
+    @qualidades.setter
+    def qualidades(self, qualidades):
+        self.__qualidades = qualidades
+
+    @property
+    def observacoes(self):
+        return self.__observacoes
+    
+    @observacoes.setter
+    def observacoes(self, observacoes):
+        self.__observacoes = observacoes
+
+
     def adicionar_candidato(self):
         conn = sqlite3.connect(Env.DATABASE_TALENTOS)
         cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Candidatos( 
+                Candidato_Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Nome TEXT NOT NULL,
+                CPF TEXT NOT NULL,
+                Telefone TEXT NOT NULL,
+                Qualidades TEXT NOT NULL,
+                Observações TEXT NOT NULL,
+                Vaga_id TEXT NOT NULL
+            )
+        ''')
+
+        try:
+            cursor.execute('''
+                INSERT INTO Candidatos (Candidato_Id, Nome, CPF, Telefone, Qualidades, Observações, Vaga_id)
+                VALUES (?,?,?,?,?,?,?)
+            ''',(self._candidatoId, self.__nome, self.__cpf, self.__telefone, self.__qualidades, self.__observacoes, self.__vagaId))
+            
+            conn.commit()
+            conn.close()
+
+            print("Candidato adicionado com sucesso!")
+
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir dados: {e}")
         
 
     def remover_candidato(self):
         pass
 
-    def get_entrevistas_agendadas(self):
-        """Recupera entrevistas agendadas do banco de dados e atualiza a lista local."""
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
+    # def get_entrevistas_agendadas(self):
+    #     """Recupera entrevistas agendadas do banco de dados e atualiza a lista local."""
+    #     conn = sqlite3.connect('funcionarios.db')
+    #     cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM entrevistas WHERE candidatura_id=?", (self.id,))
-        rows = cursor.fetchall()
+    #     cursor.execute("SELECT * FROM entrevistas WHERE candidatura_id=?", (self.id,))
+    #     rows = cursor.fetchall()
 
-        conn.close()
+    #     conn.close()
 
-        entrevistas = []
-        for row in rows:
-            entrevista = {
-                'data': row[2],  # Supondo que a coluna 2 seja a data
-                'horario': row[3],  # Supondo que a coluna 3 seja o horário
-                'entrevistador': row[4]  # Supondo que a coluna 4 seja o entrevistador
-            }
-            entrevistas.append(entrevista)
+    #     entrevistas = []
+    #     for row in rows:
+    #         entrevista = {
+    #             'data': row[2],  # Supondo que a coluna 2 seja a data
+    #             'horario': row[3],  # Supondo que a coluna 3 seja o horário
+    #             'entrevistador': row[4]  # Supondo que a coluna 4 seja o entrevistador
+    #         }
+    #         entrevistas.append(entrevista)
 
-        self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
-        return entrevistas
-
-
-class HistoricoCandidatura(BaseModel):
-    """Classe que armazena o histórico de uma candidatura, incluindo status e entrevistas realizadas."""
-
-    def __init__(self, candidatura_id):
-        super().__init__()
-        self.id = self.gerador_id(85)
-        self.candidatura_id = candidatura_id
-        self.eventos = []
-
-    def adicionar_evento(self, descricao, data=None):
-        """Adiciona um evento ao histórico da candidatura (Ex: Entrevista realizada, Feedback dado)."""
-        if data is None:
-            data = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-        evento = {
-            'descricao': descricao,
-            'data': data
-        }
-        self.eventos.append(evento)
-
-        # Inserir no banco de dados
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT INTO eventos (historico_id, descricao, data)
-            VALUES (?, ?, ?)
-        """, (self.id, descricao, data))
-
-        conn.commit()
-        conn.close()
-
-    def get_eventos(self):
-        """Recupera os eventos do banco de dados e atualiza a lista de eventos."""
-        conn = sqlite3.connect('funcionarios.db')
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM eventos WHERE historico_id=?", (self.id,))
-        rows = cursor.fetchall()
-
-        conn.close()
-
-        eventos = []
-        for row in rows:
-            evento = {
-                'descricao': row[2],  # Supondo que a coluna 2 seja a descrição
-                'data': row[3]  # Supondo que a coluna 3 seja a data
-            }
-            eventos.append(evento)
-
-        self.eventos = eventos  # Atualiza a lista local de eventos com os dados do banco
-        return eventos
+    #     self.entrevistas = entrevistas  # Atualiza a lista local de entrevistas
+    #     return entrevistas

@@ -1,14 +1,15 @@
-import sqlite3
 from tkinter import Button
 from tkinter import Canvas
 from tkinter import PhotoImage
 from tkinter import Tk
 from tkinter import Entry
-from model.Treinamento import Treinamento
-from model.funcionario import Funcionario
+from tkinter import Text
+from tkinter import Scrollbar
 
 from ui.window import Window
 from ui.window_state import WindowState
+
+import re
 
 class CadastroT(Window):
     def __init__(self, root = Tk):
@@ -73,6 +74,11 @@ class CadastroT(Window):
         self.entry_1 = Entry( bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font= ("IBMPlexSansCond Regular", 16 * -1))
         self.entry_1.place(x=548.0, y=636.0, width=139.0, height=38.0)
 
+        self.entry_placeholder_1 = "DD/MM/AAAA"
+        self.entry_1.insert(0, self.entry_placeholder_1)
+        self.entry_1.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_1, self.entry_placeholder_1))
+        self.entry_1.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_1, self.entry_placeholder_1))
+
         self.canvas.create_text(
             196.0,
             322.0,
@@ -93,13 +99,27 @@ class CadastroT(Window):
 
         self.entry_image_2 = PhotoImage(file=self.assets("entry6_2.png"))
         self.entry_bg_2 = self.canvas.create_image(440.5, 403.0, image=self.entry_image_2)
-        self.entry_2 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0)
+        self.entry_2 = Text(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font= ("IBMPlexSansCond Regular", 16 * -1))
         self.entry_2.place(x=194.0, y=356.0, width=493.0, height=92.0)
+
+        self.scrollbar_2 = Scrollbar(self.root, orient = "vertical", command=self.entry_2.yview)
+        self.entry_2.configure(yscrollcommand=self.scrollbar_2.set)
+        self.scrollbar_2.place_forget()
+
+        self.entry_2.bind("<KeyRelease>", self.check_scrollbar_2)
+        self.entry_2.bind("<Configure>", self.check_scrollbar_2)
 
         self.entry_image_3 = PhotoImage(file=self.assets("entry6_2.png"))
         self.entry_bg_3 = self.canvas.create_image(440.5, 542.0, image = self.entry_image_3)
-        self.entry_3 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0)
+        self.entry_3 = Text(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font= ("IBMPlexSansCond Regular", 16 * -1))
         self.entry_3.place( x=194.0, y=495.0, width=493.0, height=92.0)
+
+        self.scrollbar_3 = Scrollbar(self.root, orient = "vertical", command=self.entry_3.yview)
+        self.entry_3.configure(yscrollcommand=self.scrollbar_3.set)
+        self.scrollbar_3.place_forget()
+
+        self.entry_3.bind("<KeyRelease>", self.check_scrollbar_3)
+        self.entry_3.bind("<Configure>", self.check_scrollbar_3)
 
         self.canvas.create_text(
             194.0,
@@ -112,8 +132,13 @@ class CadastroT(Window):
 
         self.entry_image_4 = PhotoImage(file=self.assets("entry6_4.png"))
         self.entry_bg_4 = self.canvas.create_image(263.5, 655.0, image = self.entry_image_4)
-        self.entry_4 = Entry( bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0)
+        self.entry_4 = Entry( bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font= ("IBMPlexSansCond Regular", 16 * -1))
         self.entry_4.place(x=194.0, y=635.0, width=139.0, height=38.0)
+
+        self.entry_placeholder_4 = "DD/MM/AAAA"
+        self.entry_4.insert(0, self.entry_placeholder_4)
+        self.entry_4.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_4, self.entry_placeholder_4))
+        self.entry_4.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_4, self.entry_placeholder_4))
 
         self.canvas.create_text(
             196.0,
@@ -133,7 +158,7 @@ class CadastroT(Window):
             381.0,
             605.0,
             anchor="nw",
-            text="Duração (Horas)",
+            text="Duração",
             fill="#F3F3F3",
             font=("IBMPlexSansCond Regular", 16 * -1)
         )
@@ -142,6 +167,11 @@ class CadastroT(Window):
         self.entry_bg_6 = self.canvas.create_image( 440.5, 656.0, image = self.entry_image_6)
         self.entry_6 = Entry(bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, font= ("IBMPlexSansCond Regular", 16 * -1))
         self.entry_6.place( x=386.0, y=636.0, width=109.0, height=38.0)
+
+        self.entry_placeholder_6 = "(Horas)"
+        self.entry_6.insert(0, self.entry_placeholder_6)
+        self.entry_6.bind("<FocusIn>", lambda event: self.clear_placeholder(event, self.entry_6, self.entry_placeholder_6))
+        self.entry_6.bind("<FocusOut>", lambda event: self.add_placeholder(event, self.entry_6, self.entry_placeholder_6))
 
         self.canvas.create_text(
             172.0,
@@ -169,18 +199,58 @@ class CadastroT(Window):
     def button_back(self):
         self.switch_window(WindowState.get_window(WindowState.ID_RELACAO_T))
 
+    
+
+    def check_scrollbar_2(self, event=None):
+        
+        if self.entry_2.yview()[1] < 1.0:
+            self.scrollbar_2.place(x=677.0, y=356.0, height=92.0)
+        else:
+            self.scrollbar_2.place_forget()
+
+    def check_scrollbar_3(self, event=None):
+        
+        if self.entry_3.yview()[1] < 1.0:
+            self.scrollbar_3.place(x=677.0, y=493.0, height=84.0)
+        else:
+            self.scrollbar_3.place_forget()
+
+    def clear_placeholder(self, event):
+        if self.entry.get() == self.entry_placeholder:
+            self.entry.delete(0, "end")
+            self.entry.config(fg="#000000")
+
+    def add_placeholder(self, event):
+        if not self.entry.get():
+            self.entry.insert(0, self.entry_placeholder)
+            self.entry.config(fg="#000716")
+
+    def get_numbers(widget):
+    # Obter o texto do widget
+        text = widget.get("1.0", "end-1c")
+        
+        # Encontrar todos os números na string
+        numbers = re.findall(r'\d+', text)
+        
+        # Converter os números encontrados em inteiros e adicionar a uma lista
+        numbers_list = list(map(int, numbers))
+        
+        return numbers_list
+
     def register_coaching(self):
-        if self.entry_5.get() == "" or self.entry_2.get() == "" or self.entry_3.get() == "" or self.entry_4.get() == "" or self.entry_1.get() == "" or self.entry_6.get() == "":
+
+        if self.entry_1.get() and self.entry_2.get("1.0", "end-1c") and self.entry_3.get("1.0", "end-1c") and self.entry_4.get() and self.entry_5.get() and self.entry_6.get():
             titulo = self.entry_5.get()
-            descricao = self.entry_2.get()
-            participantes = self.entry_3.get()
+            descricao = self.entry_2.get("1.0", "end-1c")
+            participantes = self.get_number(self.entry_3)
             data_inicio = self.entry_4.get()
             data_fim = self.entry_1.get()
             duracao = self.entry_6.get()
+
             try:
-                funcionario = Funcionario.get_funcionario_by_id(participantes)
-                funcionario.treinar(titulo, descricao, participantes, data_inicio, data_fim, duracao)
-                
+                treinamento = treinamento()
+                treinamento.get_dados(titulo, descricao, data_inicio, data_fim, duracao, participantes)
+                treinamento.adicionar_candidato()
 
             except ValueError as e:
                 if self.mensage_get:
@@ -197,22 +267,23 @@ class CadastroT(Window):
 
             if self.mensage_get:
                 self.canvas.delete(self.mensage_get)
-                self.mensage_get = self.canvas.create_text(
-                        600.0, 
-                        174.0,  
-                        anchor="nw", 
-                        text="* Cadastro realizado com sucesso", 
-                        fill="#008c00",
-                        font=("Itim Regular", 18 * -1)
-                        )
+            self.mensage_get = self.canvas.create_text(
+                560.0, 
+                174.0,  
+                anchor="nw", 
+                text="*Sucesso ao cadastrar", 
+                fill="#008c00",
+                font=("Itim Regular", 16 * -1)
+            )
+
         else:
             if not self.mensage_get:
                 self.mensage_get = self.canvas.create_text(
-                        600.0, 
+                        560.0, 
                         176.0,  
                         anchor="nw", 
                         text="Preencha todos os campos (*)", 
                         fill="#FF0000",
-                        font=("Itim regular", 18 * -1)
-                        )
-        
+                        font=("Itim regular", 16 * -1)
+                )
+

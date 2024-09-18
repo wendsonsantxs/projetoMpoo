@@ -1,121 +1,133 @@
-import sqlite3
-from utils.env import Env
 from utils.util import Util
+from utils.env import Env
+
+import sqlite3
 
 class Treinamento:
-    def __init__(self, titulo, descricao, participantes, data_inicio, data_fim, duracao):
-        self.__treinamentoId = Util.gerador_id(7, 41)
-        self.__titulo = self.veriricarTitulo(titulo)
+    def __init__(self):
+        self.treinamentoId = Util.gerador_id(7, 41)
+        self.__titulo = None
+        self.__descricao = None
+        self.__dataInicio = None
+        self.__dataFim = None
+        self.__duracao = None
+        self.__participantes = {}
+        self.__status = None
+
+    def get_dados(self, titulo, descricao, dataInicio, dataFim, duracao, participantes):
+        self.titulo = titulo
         self.descricao = descricao
-        self.participantes = participantes
+        self.dataInicio = dataInicio
+        self.dataFim = dataFim
         self.duracao = duracao
-        self.__dataInicio = self.verificarData(data_inicio)
-        self.__dataFim = self.verificarData(data_fim)
-        self.participante = {}
-        self.__status = Util.status('pendente')
-    
-    def verificarData(self, data):
-        if not Util.validar_data(data):
-            raise ValueError("Data inválida.")
-        return data
+        status = Util.status(self.dataInicio, self.dataFim)
+        self.status = status
+        self.participantes = participantes
 
-    def veriricarTitulo(self, titulo):
-        if len(titulo) < 5:
-            raise ValueError("O título deve ter no mínimo 5 caracteres.")
-        return titulo
-
-    def adicionar_participante(self, funcionario_id):
-        """Adiciona um funcionário ao treinamento e salva no banco de dados."""
-        
-        if funcionario_id not in self.participantes:
-            self.participantes.append(funcionario_id)
-            conn =sqlite3.connect(Env.DATABASE_TREINAMENTOS)
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS treinamentos (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    treinamento_id TEXT NOT NULL,
-                    funcionario_id TEXT NOT NULL,
-                    titulo TEXT NOT NULL,
-                    cargo TEXT NOT NULL,
-                    duracao TEXT NOT NULL,
-                )
-            """)
-    
-        try:
-            cursor.execute('''
-                INSERT INTO treinamentos (treinamento_id, funcionario_id, titulo, cargo, duracao)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (self.treinamentoId, self.funcionarioId, self.titulo, self.cargo, self.duracao))
-            conn.commit()
-            conn.close()
-            print("Treinamento adicionado com sucesso!")
-        except sqlite3.Error as e:
-            print(f"Erro ao inserir dados: {e}")
-
-        
-
-
-
-    
-    @property
-    def treinamentoId(self):
-        return self.__treinamentoId
-    
-    @treinamentoId.setter
-    def treinamentoId(self, novoId):
-        self.__treinamentoId = novoId
-
-    @property
-    def status(self):
-        return self.__status
-              
-    @property
-    def duracao(self):
-        return self.__duracao
-    
-    @duracao.setter
-    def duracao(self, novaDuracao):
-        self.__duracao = novaDuracao
-
-    @property
-    def participante(self):
-        return self.__participante
-    
-    @participante.setter
-    def participante(self, novoParticipante):
-        self.__participante = novoParticipante
-
-        
     @property
     def titulo(self):
         return self.__titulo
     
+    @titulo.setter
+    def titulo(self, titulo):
+        self.__titulo = titulo
+
     @property
-    def cargo(self):
-        return self.__cargo
+    def descricao(self):
+        return self.__descricao
     
-    @cargo.setter
-    def cargo(self, novaDescricao):
-        self.__cargo = novaDescricao
+    @descricao.setter
+    def descricao(self, descricao):
+        self.__descricao = descricao
 
     @property
     def dataInicio(self):
         return self.__dataInicio
     
+    @dataInicio.setter
+    def dataInicio(self, dataInicio):
+        self.__dataInicio = Util.verify_data(dataInicio)
+
     @property
     def dataFim(self):
         return self.__dataFim
     
+    @dataFim.setter
+    def dataFim(self, dataFim):
+        self.__dataFim = Util.verify_data(dataFim)
+
     @property
-    def cargo(self):
-        return self.__cargo
+    def duracao(self):
+        return self.__duracao
     
+    @duracao.setter
+    def duracao(self, duracao):
+        self.__duracao = duracao
+
+    @property
+    def status(self):
+        return self.__status
+    
+    @status.setter
+    def status(self, status):
+        self.__status = status
+
+    @property
+    def participantes(self):
+        return self.__participantes
+    
+    @participantes.setter
+    def participantes(self, participantes):
+        for i in participantes:
+            
+            conn = sqlite3.connect(Env.DATABASE_FUNCIONARIO)
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT 1 FROM funcionarios WHERE funcionarioId = ?", i) #verificar se o funcionario existe
+            resultado = cursor.fetchone()
+
+            if resultado:
+                cursor.execute("SELECT * FROM funcionarios LIMIT 1 OFFSET 1")
+                nome = cursor.fetchone()
+                self.__participantes[i] = nome
+            else:
+                print("Funcionário não encontrado")
+
+            
+
+    def inserir_treinamento(self):
+       
+        conn = sqlite3.connect(Env.DATABASE_TREINAMENTO)
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Treinamentos (
+                Treinamento_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Titulo TEXT NOT NULL,
+                Descrição TEXT NOT NULL,
+                Data_inicio TEXT NOT NULL,
+                Data_inicio TEXT NOT NULL,
+                DuraçãoTEXT NOT NULL,
+                Data_fim TEXT NOT NULL,
+                Status TEXT NOT NULL
+            )
+        ''')
+       
+        try:
+            cursor.execute('''
+                INSERT INTO Treinamentos (Treinamento_id, Titulo, Descrição, Data_inicio, Duração, Data_fim, Status)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (self.treinamentoId, self.__titulotitulo, self.__descricao, self.__dataInicio, self.__duracao, self.__dataFim, self.__status))
+            conn.commit()
+            conn.close()
+
+            print("Treinamento adicionado com sucesso!")
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir dados: {e}")
+
     def remover_participante(self, funcionario_id):
-        """Remove um funcionário do treinamento e do banco de dados."""
+        
         if funcionario_id in self.participantes:
             self.participantes.remove(funcionario_id)
-            del self.progresso[funcionario_id]
             with sqlite3.connect(Env.DATABASE_TREINAMENTOS) as conn:
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM participantes WHERE treinamento_id=? AND funcionario_id=?",
@@ -124,44 +136,16 @@ class Treinamento:
             conn.close()
         else:
             raise ValueError('Funcionário não encontrado no treinamento.')
-        
-    def obter_resumo(self):
-        """Retorna um resumo do treinamento, incluindo participantes e seus progressos."""
-        resumo = {
-            'titulo': self.titulo,
-            'descricao': self.descricao,
-            'data_inicio': self.data_inicio,
-            'data_fim': self.data_fim,
-            'status': self.status,
-            'participantes': {
-                participante: self.progresso[participante] for participante in self.participantes
-            }
-        }
-        return resumo
-    
 
-
-        
-
-
-
-
-    def get_treinamento_by_id(cls, treinamento_id):
-        """Recupera um treinamento do banco de dados pelo ID."""
-        with sqlite3.connect(Env.DATABASE_TREINAMENTOS) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM treinamentos WHERE id=?", (treinamento_id,))
-            row = cursor.fetchone()
-
-        if row:
-            return cls(
-                titulo=row[1],
-                descricao=row[2],
-                data_inicio=row[3],
-                data_fim=row[4],
-                status=row[5]
-            )
+    def inserir_participantes(self, funcionario_id):
+        """Adiciona um funcionário ao treinamento."""
+        if funcionario_id not in self.participantes:
+            self.participantes.append(funcionario_id)
+            with sqlite3.connect(Env.DATABASE_TREINAMENTOS) as conn:
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO participantes (treinamento_id, funcionario_id) VALUES (?, ?)",
+                        (self.treinamentoId, funcionario_id))
+            conn.commit()
+            conn.close()
         else:
-            raise ValueError(f"Treinamento com ID {treinamento_id} não encontrado.")
-        
-
+            raise ValueError('Funcionário já está no treinamento.')

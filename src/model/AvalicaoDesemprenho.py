@@ -1,35 +1,27 @@
 from utils.util import Util
 from utils.env import Env
 
-
+import sqlite3
 class AvaliacaoDesempenho:
     def __init__(self, funcionarioId, dataAvalicao, feedback):
-        self.__avaliacaoId= Util.gerador_id(7, 24)
-        self.__funcionarioId= self.validarFuncionario(funcionarioId)
-        self.dataAvaliacao= dataAvalicao
-        self.feedback= feedback
+        self.avaliacaoId= Util.gerador_id()
+        self.__funcionarioId= funcionarioId
+        self.__dataAvaliacao= dataAvalicao
+        self.__feedback= feedback
         
-  
     
-    def validarFuncionario(self):
-        if self.funcionarioId > 0:
-            return True
-        else:
-            return False
-        
-    @property
-    def avaliacaoId(self):
-        return self.__avaliacaoId
-    @avaliacaoId.setter
-    def avaliacaoId(self, novoId):
-        self.__avaliacaoId = novoId
     
     @property
     def funcionarioid(self):
         return self.__funcionarioId
+    
     @funcionarioid.setter
     def funcionarioId(self, novoId):
-        self.__funcionarioId = novoId
+        verify = Util.verify_existence(Env.DATABASE_FUNCIONARIO, 'funcionario', 'funcionarioId', novoId)
+        if verify:
+            raise ValueError('Funcionário não existe')
+        else:
+            self.__funcionarioId = novoId
         
     @property
     def dataAvaliacao(self):
@@ -37,12 +29,8 @@ class AvaliacaoDesempenho:
     
     @dataAvaliacao.setter
     def dataAvaliacao(self, novaData):
-        temp = self.__dataAvaliacao
-        if temp != novaData:
-            self.__dataAvaliacao = novaData
-        else:
-            raise ValueError('O valor não pode ser igual')
-        
+        self.__dataAvaliacao = Util.verify_data(novaData)
+                
     @property
     def feedback(self):
         return self.__feedback
@@ -52,52 +40,29 @@ class AvaliacaoDesempenho:
         self.__feedback = novoFeedback
 
 
-    
-    @classmethod
-    def get_avaliacao_by_id(cls, avaliacao_id):
-        """Busca uma avaliação de desempenho no banco de dados pelo ID."""
-        conn = sqlite3.connect(Env.DATABASE_AVALIACOES)
+    def adicinar_avaliacao(self):
+        conn = sqlite3.connect(Env.DATABASE_TALENTOS)
         cursor = conn.cursor()
+        cursor.execute('''
+                       CREATE TABLE IF NOT EXISTS Avaliações(
+                       Avaliação-Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       Funcionario-id TEXT NOT NULL,
+                       Data_avaliação TEXT NOT NULL,
+                       Feedback TEXT NOT NULL)
+                       ''')
 
-        cursor.execute("SELECT * FROM avaliacao WHERE id=?", (avaliacao_id,))
-        row = cursor.fetchone()
+        try:
+            cursor.execute('''
+                INSERT INTO funcionarios (Avaliação-Id, funcionario-id, data_avaliação, Feedback)
+                VALUES (?,?,?,?)
+            ''',(self.avaliacaoId, self.__funcionarioId, self.__dataAvaliacao, self.__feedback))
+            
+            conn.commit()
+            conn.close()
 
-        conn.close()
+            print("Avaliação adicionado com sucesso!")
 
-        if row:
-            avaliacao = cls(
-                funcionario_id=row[1],
-                data_avaliacao=row[2],
-                feedback=row[3]
-            )
-            avaliacao.id = row[0]  # Atribui o ID recuperado do banco
-            return avaliacao
-        else:
-            raise ValueError(f"Avaliação com ID {avaliacao_id} não encontrada.")
-
-    def salvar_avaliacao(self):
-        """Salva a avaliação de desempenho no banco de dados."""
-        conn = sqlite3.connect(Env.DATABASE_AVALIACOES)
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT INTO avaliacao (id, funcionario_id, data_avaliacao, feedback)
-            VALUES (?, ?, ?, ?)
-        """, (self.id, self.funcionario_id, self.data_avaliacao, self.feedback))
-
-        conn.commit()
-        conn.close()
-
-    def atualizar_avaliacao(self):
-        """Atualiza uma avaliação de desempenho existente no banco de dados."""
-        conn = sqlite3.connect(Env.DATABASE_AVALIACOES)
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            UPDATE avaliacao
-            SET funcionario_id = ?, data_avaliacao = ?, feedback = ?
-            WHERE id = ?
-        """, (self.funcionario_id, self.data_avaliacao, self.feedback, self.id))
-
-        conn.commit()
-        conn.close()
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir dados: {e}")
+         
+ 

@@ -6,18 +6,16 @@ from tkinter import Tk
 from ui.window import Window
 from ui.window_state import WindowState
 from ui.funcionarios.cadastro import CadastroF
-from ui.funcionarios.avaliacoes import Avaliacoes
-from ui.funcionarios.folha_pagamento import FolhaPagamento
-from ui.funcionarios.folha_ponto import FolhaPonto
+from ui.funcionarios.remover import Remocao
+from ui.funcionarios.pesquisar.window import PesquisarF
 
 class FuncionariosWindow(Window):
     def __init__(self, root: Tk):
         super().__init__(root=root)
         WindowState.set_window(WindowState.ID_CADASTRO_F, CadastroF(root=self.root))
-        WindowState.set_window(WindowState.ID_AVALIACAO, Avaliacoes(root=self.root))
-        WindowState.set_window(WindowState.ID_FOLHA_PAGAMENTO, FolhaPagamento(root=self.root))
-        WindowState.set_window(WindowState.ID_FOLHA_PONTO, FolhaPonto(root=self.root))
-
+        WindowState.set_window(WindowState.ID_REMOCAO_F, Remocao(root=self.root))
+        WindowState.set_window(WindowState.ID_PESQUISA_F, PesquisarF(root=self.root))
+ 
     def create(self):
         super().create()
         self.canvas = Canvas(self.root, bg="#FFFFFF", height=self.height,
@@ -52,7 +50,7 @@ class FuncionariosWindow(Window):
             command=self.relacaoF_button01,
             relief="flat"
         )
-        self.button_1.place(x=502.0, y=289.0, width=172.0, height=60.0)
+        self.button_1.place(x=502.0, y=325.0, width=172.0, height=60.0)
 
         self.button_image_2 = PhotoImage(
             file=self.assets("button_1.png"))
@@ -63,7 +61,7 @@ class FuncionariosWindow(Window):
             command=self.relacaoF_button02,
             relief="flat"
         )
-        self.button_2.place(x=502.0,  y=415.0, width=172.0, height=60.0)
+        self.button_2.place(x=502.0,  y=455.0, width=172.0, height=60.0)
 
         self.button_image_3 = PhotoImage(
             file=self.assets("button_1.png"))
@@ -74,51 +72,31 @@ class FuncionariosWindow(Window):
             command=self.relacaoF_button03,
             relief="flat"
         )
-        self.button_3.place(x=502.0, y=537.0, width=172.0, height=60.0)
-
-        self.button_image_4 = PhotoImage(
-            file=self.assets("button_1.png"))
-        self.button_4 = Button(
-            image=self.button_image_4,
-            borderwidth=0,
-            highlightthickness=0,
-            command=self.relacaoF_button04,
-            relief="flat"
-        )
-        self.button_4.place(x=502.0,  y=661.0, width=172.0, height=60.0)
+        self.button_3.place(x=502.0, y=577.0, width=172.0, height=60.0)
 
         self.canvas.create_text(
             164.0,
-            296.0,
+            336.0,
             anchor="nw",
             text="Cadastro De Funcionário",
             fill="#FFFFFF",
-            font=("Itim Regular", 30 * -1)
+            font=("Itim Regular", 29 * -1)
         )
 
         self.canvas.create_text(
             192.0,
-            426.0,
+            466.0,
             anchor="nw",
-            text="Folha De Pagamento",
+            text="Remover Funcionário",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
 
         self.canvas.create_text(
-            223.0,
-            548.0,
+            258.0,
+            590.0,
             anchor="nw",
-            text="Folha De Ponto",
-            fill="#FFFFFF",
-            font=("Itim Regular", 30 * -1)
-        )
-
-        self.canvas.create_text(
-            254.0,
-            667.0,
-            anchor="nw",
-            text="Avaliações",
+            text="Pesquisar",
             fill="#FFFFFF",
             font=("Itim Regular", 30 * -1)
         )
@@ -161,13 +139,10 @@ class FuncionariosWindow(Window):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_CADASTRO_F))
 
     def relacaoF_button02(self):
-        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_FOLHA_PAGAMENTO))
+        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_REMOCAO_F))
 
     def relacaoF_button03(self):
-        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_FOLHA_PONTO))
-
-    def relacaoF_button04(self):
-        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_AVALIACAO))
+        self.switch_window(swap_to=WindowState.get_window(WindowState.ID_PESQUISA_F))
 
     def button_back(self):
         self.switch_window(swap_to=WindowState.get_window(WindowState.ID_MAIN))
